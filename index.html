@@ -88,10 +88,10 @@
            --accent-hover: #1da851;
            --mail-bg: #4a5568;
            --mail-hover: #2d3748;
-           --bg: #f4f7f9;
-           --card-bg: #ffffff;
-           --text: #2c3e50;
-           --border: #e2e8f0;
+           --bg: #D4AF37;
+           --card-bg: #D4AF37;
+           --text: #0A1A2F;
+           --border: rgba(10, 26, 47, 0.2);
            --required: #e53e3e;
            --header-footer-bg: #0A1A2F;
            --header-footer-text: #ffffff;
@@ -144,26 +144,54 @@
        .container { max-width:1100px; margin:0 auto; padding:40px 20px; }
        h1.form-title { text-align:center; color:var(--heading-color); margin-bottom:25px; font-weight:700; font-size:44px; }
 
-       .filter-card { background:var(--card-bg); padding:25px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.05); margin-bottom:30px; }
+       .filter-card {
+           background:rgba(255, 255, 255, 0.25);
+           backdrop-filter: blur(5px);
+           padding:25px;
+           border-radius:12px;
+           box-shadow:0 4px 15px rgba(0,0,0,0.08);
+           margin-bottom:30px;
+           border: 1px solid rgba(255, 255, 255, 0.4);
+           position: relative;
+           z-index: 50;
+       }
        .filter-grid-3col { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; }
-       .filter-group label { display:block; font-weight:600; margin-bottom:10px; color:var(--primary); font-size:15px; }
+       .filter-group label { display:block; font-weight:700; margin-bottom:10px; color:var(--heading-color); font-size:15px; }
 
        .custom-multiselect { position:relative; width:100%; }
-       .select-box { padding:10px 14px; border:1px solid var(--border); border-radius:8px; background:white; cursor:pointer; display:flex; justify-content:space-between; align-items:center; }
+       .select-box { padding:10px 14px; border:1px solid rgba(0,0,0,0.15); border-radius:8px; background:white; cursor:pointer; display:flex; justify-content:space-between; align-items:center; color: #2c3e50; }
        .select-box:after { content:"▼"; font-size:10px; color:#718096; margin-left:8px; }
-       .checkboxes-dropdown { display:none; position:absolute; top:100%; left:0; right:0; background:white; border:1px solid var(--border); border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15); max-height:250px; overflow-y:auto; z-index:100; margin-top:4px; padding:6px 0; }
+      
+       /* KORREKTUR DER DROPDOWN-EBENE UND DECKKRAFT */
+       .checkboxes-dropdown {
+           display:none;
+           position:absolute;
+           top:100%;
+           left:0;
+           right:0;
+           background:#ffffff !important;
+           border:1px solid rgba(0,0,0,0.15);
+           border-radius:8px;
+           box-shadow:0 10px 25px rgba(0,0,0,0.25);
+           max-height:250px;
+           overflow-y:auto;
+           z-index:9999 !important;
+           margin-top:4px;
+           padding:6px 0;
+           color: #2c3e50;
+       }
        .checkboxes-dropdown.open { display:block; }
        .dropdown-option { display:flex; align-items:center; padding:8px 12px; cursor:pointer; }
        .dropdown-option:hover { background-color: #f7fafc; }
        .dropdown-option input[type="checkbox"] { margin-right:10px; width:16px; height:16px; accent-color:var(--primary); }
 
-       .filter-actions { display:flex; justify-content:flex-end; margin-top:15px; padding-top:15px; border-top:1px dashed var(--border); }
-       .btn-reset-all { padding:9px 16px; background:#e2e8f0; border:none; border-radius:8px; cursor:pointer; font-size:13px; font-weight:600; color:#4a5568; transition: background .2s; }
-       .btn-reset-all:hover { background: #cbd5e0; }
+       .filter-actions { display:flex; justify-content:flex-end; margin-top:15px; padding-top:15px; border-top:1px dashed rgba(10, 26, 47, 0.2); }
+       .btn-reset-all { padding:9px 16px; background:var(--header-footer-bg); border:none; border-radius:8px; cursor:pointer; font-size:13px; font-weight:600; color:#ffffff; transition: background .2s; }
+       .btn-reset-all:hover { background: #1E2D42; }
 
-       .route-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:25px; }
-       .route-card { background:var(--card-bg); border-radius:12px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.06); display:flex; flex-direction:column; transition:transform .2s, box-shadow .2s; border:1px solid var(--border); color:#2c3e50; }
-       .route-card:hover { transform:translateY(-4px); box-shadow:0 8px 24px rgba(0,0,0,0.12); }
+       .route-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:25px; position:relative; z-index:1; }
+       .route-card { background:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 6px 18px rgba(0,0,0,0.1); display:flex; flex-direction:column; transition:transform .2s, box-shadow .2s; border:1px solid rgba(0,0,0,0.08); color:#2c3e50; }
+       .route-card:hover { transform:translateY(-4px); box-shadow:0 10px 28px rgba(0,0,0,0.15); }
 
        .card-header { padding:18px 20px 14px 20px; background:#fff; border-bottom:1px solid #f0f0f0; }
        .card-header h3 { margin:0; font-size:18px; color:var(--primary); line-height:1.3; font-weight:700; }
@@ -181,7 +209,7 @@
        .promo-box { background: #fff5f5; border: 1px solid #fed7d7; border-radius: 6px; padding: 8px 12px; margin-top: 10px; font-size: 13px; color: #c53030; font-weight: 600; }
        .addons-box { background: #f0fff4; border: 1px solid #c6f6d5; border-radius: 6px; padding: 8px 12px; margin-top: 10px; font-size: 12px; color: #22543d; }
 
-       .actions { padding:15px 20px; display:flex; flex-direction:column; gap:10px; background:#fafbfc; border-top:1px solid var(--border); }
+       .actions { padding:15px 20px; display:flex; flex-direction:column; gap:10px; background:#fafbfc; border-top:1px solid #e2e8f0; }
        .actions .collapsed, .actions .expanded { display:flex; gap:10px; flex-direction:column; }
        .actions .expanded { display:none; }
 
@@ -209,15 +237,15 @@
        .btn-toggle, .btn-hide {
            background-color: #edf2f7;
            color: #4a5568;
-           border: 1px solid var(--border);
+           border: 1px solid #e2e8f0;
        }
        .btn-toggle:hover, .btn-hide:hover { background-color: #e2e8f0; }
 
-       .details-expanded { display:none; padding:15px 20px; background:#f8fafc; border-top:1px solid var(--border); font-size:13px; color:#2c3e50; line-height:1.6; }
+       .details-expanded { display:none; padding:15px 20px; background:#f8fafc; border-top:1px solid #e2e8f0; font-size:13px; color:#2c3e50; line-height:1.6; }
        .details-expanded.open { display:block; }
        .legal-text { font-size: 11px; color: #718096; margin-top: 10px; line-height: 1.4; border-top: 1px solid #e2e8f0; padding-top: 8px; }
 
-       .no-results { grid-column:1/-1; text-align:center; padding:24px 20px; background:#fff; border-radius:12px; color:#4a5568; font-size:15px; border:1px dashed var(--border); }
+       .no-results { grid-column:1/-1; text-align:center; padding:24px 20px; background:#fff; border-radius:12px; color:#4a5568; font-size:15px; border:1px dashed #cbd5e0; }
 
        /* NEWSLETTER SECTION INTEGRATION */
        .newsletter-section {
@@ -231,7 +259,7 @@
            background-color: #0A1A2F;
            border-radius: 12px;
            padding: 25px 20px;
-           box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+           box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
            border: 1px solid #1E2D42;
        }
 
@@ -654,7 +682,6 @@
                route: "Tag 1: Miami (USA/Florida)<br>Tag 2: Seetag<br>Tag 3: Roatan (Honduras)<br>Tag 4: Costa Maya (Mexiko)<br>Tag 5: Cozumel (Mexiko)<br>Tag 6: Seetag<br>Tag 7: Ocean Cay MSC Marine Reserve Bahamas<br>Tag 8: Miami (USA/Florida)",
                legal: "* Gesamtreisepreis inkl. Hotel-Servicegebühr pro Person in Euro bei Standard-Doppelbelegung. Das Angebot ist gültig für Neubuchungen bis 30.09.2026. Das Last Minute Angebot ist nicht mit dem MSC Voyagers Club Rabatt sowie mit anderen Angeboten und Rabatten kombinierbar und gilt vorbehaltlich der Verfügbarkeit. MSC Cruises S.A., Avenue Eugène-Pittard 40, 1206 Genf, Schweiz. Es gelten die aktuellen Reisebedingungen von MSC Cruises: https://www.msccruises.de/agb"
            }
-
        ];
 
        document.addEventListener("DOMContentLoaded", () => {
