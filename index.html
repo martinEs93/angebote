@@ -200,21 +200,39 @@
      .btn-reset-all { padding:9px 16px; background:var(--header-footer-bg); border:none; border-radius:8px; cursor:pointer; font-size:13px; font-weight:600; color:#ffffff; transition: background .2s; }
      .btn-reset-all:hover { background: #1E2D42; }
 
-     .route-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:25px; position:relative; z-index:1; }
-     .route-card { background:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 6px 18px rgba(0,0,0,0.1); display:flex; flex-direction:column; transition:transform .2s, box-shadow .2s; border:1px solid rgba(0,0,0,0.08); color:#2c3e50; }
-     .route-card:hover { transform:translateY(-4px); box-shadow:0 10px 28px rgba(0,0,0,0.15); }
+     .offers-toolbar { display:flex; align-items:center; justify-content:space-between; gap:16px; margin:0 0 18px; }
+     .results-count { margin:0; color:#24364d; font-size:14px; font-weight:600; }
+     .sort-control { position:relative; }
+     .sort-button { min-width:220px; display:inline-flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 14px; color:var(--primary); background:#ffffff; border:1px solid rgba(0, 51, 102, .2); border-radius:9px; cursor:pointer; font:inherit; font-size:14px; font-weight:700; box-shadow:0 3px 10px rgba(10,26,47,.08); }
+     .sort-button:hover, .sort-button[aria-expanded="true"] { border-color:var(--primary); box-shadow:0 5px 15px rgba(10,26,47,.14); }
+     .sort-button:focus-visible, .sort-option:focus-visible { outline:3px solid rgba(37,211,102,.55); outline-offset:2px; }
+     .sort-menu { position:absolute; top:calc(100% + 8px); right:0; z-index:60; width:250px; padding:6px; background:#fff; border:1px solid rgba(0,51,102,.14); border-radius:10px; box-shadow:0 14px 30px rgba(10,26,47,.18); }
+     .sort-menu[hidden] { display:none; }
+     .sort-option { display:block; width:100%; padding:10px 12px; color:#24364d; text-align:left; background:transparent; border:0; border-radius:6px; cursor:pointer; font:inherit; font-size:14px; }
+     .sort-option:hover, .sort-option[aria-current="true"] { color:var(--primary); background:#eef5fb; font-weight:700; }
 
-     .card-header { padding:18px 20px 14px 20px; background:#fff; border-bottom:1px solid #f0f0f0; }
-     .card-header h3 { margin:0; font-size:18px; color:var(--primary); line-height:1.3; font-weight:700; }
+     .route-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:25px; position:relative; z-index:1; }
+     .route-card { position:relative; background:#ffffff; border-radius:14px; overflow:hidden; box-shadow:0 6px 18px rgba(0,0,0,0.1); display:flex; flex-direction:column; transition:transform .2s, box-shadow .2s; border:1px solid rgba(0,0,0,0.08); color:#2c3e50; }
+     .route-card::before { content:""; display:block; height:5px; background:linear-gradient(90deg, var(--primary), #216aa7); }
+     .route-card:hover { transform:translateY(-5px); box-shadow:0 13px 30px rgba(10,26,47,.18); }
+
+     .card-header { padding:18px 20px 16px; background:#fff; border-bottom:1px solid #f0f0f0; }
+     .card-eyebrow { display:block; margin-bottom:5px; color:#60748a; font-size:11px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; }
+     .card-header h3 { margin:0; font-size:19px; color:var(--primary); line-height:1.3; font-weight:750; }
 
      .image-container { position:relative; width:100%; height:220px; background:#fff; display:flex; align-items:center; justify-content:center; padding:10px; }
      .image-container img { max-width:100%; max-height:100%; object-fit:contain; }
 
-     .price-badge { position: absolute; bottom: 12px; right: 12px; background: var(--primary); color: #fff; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+     .price-badge { flex:0 0 auto; color:#ffffff; background:linear-gradient(135deg, var(--primary), #145386); padding:7px 10px; border-radius:7px; font-size:15px; font-weight:800; line-height:1.2; box-shadow:0 3px 8px rgba(0,51,102,.22); white-space:nowrap; }
 
      .route-details-short { padding:15px 20px; flex-grow:1; font-size:14px; color:#2c3e50; }
-     .detail-row { display:flex; justify-content:space-between; margin-bottom:6px; padding-bottom:6px; border-bottom:1px dashed #f0f0f0; }
-     .detail-label { color:#4a5568; }
+     .departure-port { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 0 13px; padding:9px 10px 9px 12px; color:var(--primary); background:#eef5fb; border:1px solid #d8e8f5; border-radius:8px; }
+     .departure-info { display:flex; align-items:center; min-width:0; gap:10px; }
+     .departure-info i { flex:0 0 auto; font-size:17px; }
+     .departure-port span { display:block; color:#587087; font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
+     .departure-port strong { display:block; overflow:hidden; font-size:14px; text-overflow:ellipsis; white-space:nowrap; }
+     .detail-row { display:flex; justify-content:space-between; gap:14px; margin-bottom:6px; padding-bottom:6px; border-bottom:1px dashed #e7edf2; }
+     .detail-label { color:#607080; }
      .detail-value { font-weight:600; color:#2c3e50; text-align: right; }
 
      .promo-box { background: #fff5f5; border: 1px solid #fed7d7; border-radius: 6px; padding: 8px 12px; margin-top: 10px; font-size: 13px; color: #c53030; font-weight: 600; }
@@ -289,6 +307,9 @@
          h1.form-title { font-size:32px; }
          .container { padding:20px 15px; }
          .filter-grid-4col { grid-template-columns:1fr; }
+         .offers-toolbar { align-items:stretch; flex-direction:column; }
+         .sort-button { width:100%; }
+         .sort-menu { left:0; right:auto; width:100%; }
          .route-grid { grid-template-columns:1fr; }
          .footer-links { flex-direction:column; gap:10px; }
          .newsletter-wrapper { padding: 15px 10px; }
@@ -372,6 +393,23 @@
 
              <div class="filter-actions">
                  <button class="btn-reset-all" onclick="resetAllFilters()"><i class="fa-solid fa-rotate-right"></i> Alle Filter zurücksetzen</button>
+             </div>
+         </div>
+
+         <div class="offers-toolbar">
+             <p class="results-count" id="resultsCount" role="status" aria-live="polite"></p>
+             <div class="sort-control">
+                 <button class="sort-button" id="sortButton" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="sortMenu">
+                     <span><i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i> Sortieren: <span id="sortButtonLabel">Bald ablaufend</span></span>
+                     <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                 </button>
+                 <div class="sort-menu" id="sortMenu" role="menu" hidden>
+                     <button class="sort-option" type="button" role="menuitem" data-sort="expiryAsc" aria-current="true">Bald ablaufend</button>
+                     <button class="sort-option" type="button" role="menuitem" data-sort="priceAsc">Preis: niedrig nach hoch</button>
+                     <button class="sort-option" type="button" role="menuitem" data-sort="priceDesc">Preis: hoch nach niedrig</button>
+                     <button class="sort-option" type="button" role="menuitem" data-sort="departurePortAsc">Abfahrtshafen: A–Z</button>
+                     <button class="sort-option" type="button" role="menuitem" data-sort="cruiseLineAsc">Reederei: A–Z</button>
+                 </div>
              </div>
          </div>
 
@@ -509,7 +547,9 @@
      const MY_PHONE_NUMBER = "493083199468";
      const MY_EMAIL = "kontakt@corecruises.de";
 
-     const cruiseLinesList = ["AIDA", "MSC", "Costa", "NCL", "Royal Carribean"];
+     // Jedes Angebot erhält sein eigenes, eindeutiges Enddatum.
+     // Dadurch können neue Angebote derselben Aktion parallel veröffentlicht werden.
+     const OFFER_EXPIRY_HOUR = 18;
 
      const priceRangesList = [
          { label: "0€ bis 500€", value: "0-500", min: 0, max: 500 },
@@ -518,32 +558,16 @@
          { label: "über 1000€", value: "1001-99999", min: 1001, max: 99999 }
      ];
 
-     const regionsList = [
-         "Mittelmeer",
-         "Nordeuropa",
-         "Asien",
-         "Afrika",
-         "Kanaren",
-         "Nordamerika",
-         "Karibik & Antillen",
-         "Südamerika"
-     ];
-
-     const actionsList = [
-         "AIDA Verlockung der Woche",
-	 "AIDA SuperSeptember",
-         "CATCH OF THE WEEK",
-         "LAST MINUTE"
-     ];
-
      let selectedLines = [];
      let selectedPrices = [];
      let selectedRegions = [];
      let selectedActions = [];
+     let activeSort = 'expiryAsc';
 
      const offersData = [
          {
              id: 1,
+             validUntil: "2026-09-30",
              title: "Mediterrane Schätze mit Korsika",
              reederei: "AIDA",
              schiff: "AIDAcosma",
@@ -562,6 +586,7 @@
          },
 {
     id: 2,
+    validUntil: "2026-09-22",
     title: "NORWEGISCHE FJORDE",
     reederei: "MSC",
     schiff: "MSC Euribia",
@@ -580,6 +605,7 @@
 },
 {
     id: 3,
+    validUntil: "2026-09-22",
     title: "METROPOLEN DER OSTSEE",
     reederei: "MSC",
     schiff: "MSC Magnifica",
@@ -598,6 +624,7 @@
 },
 {
     id: 4,
+    validUntil: "2026-09-22",
     title: "NORWEGISCHE FJORDE",
     reederei: "MSC",
     schiff: "MSC Preziosa",
@@ -616,6 +643,7 @@
 },
 {
     id: 5,
+    validUntil: "2026-09-22",
     title: "IRLAND & GROSSBRITANNIEN",
     reederei: "MSC",
     schiff: "MSC Preziosa",
@@ -634,6 +662,7 @@
 },
 {
     id: 6,
+    validUntil: "2026-09-30",
     title: "Metropolen ab Hamburg",
     reederei: "AIDA",
     schiff: "AIDAnova",
@@ -652,6 +681,7 @@
 },
 {
     id: 7,
+    validUntil: "2026-09-30",
     title: "Kanaren & Madeira",
     reederei: "AIDA",
     schiff: "AIDAcosma",
@@ -670,6 +700,7 @@
 },
 {
   "id": 8,
+  "validUntil": "2026-09-30",
   "title": "Karibische Inseln",
   "reederei": "AIDA",
   "schiff": "AIDAperla",
@@ -688,6 +719,7 @@
 },
 {
   "id": 9,
+  "validUntil": "2026-09-30",
   "title": "Norwegens Fjord-Weltnaturerbe 1",
   "reederei": "AIDA",
   "schiff": "AIDAprima",
@@ -706,6 +738,7 @@
 },
 {
     "id": 10,
+    "validUntil": "2026-09-10",
     "title": "Kanada & Indian Summer ab New York 2",
     "reederei": "AIDA",
     "schiff": "AIDAluna",
@@ -724,6 +757,7 @@
   },
 {
     "id": 11,
+    "validUntil": "2026-09-10",
     "title": "Von Hamburg über Grönland nach New York",
     "reederei": "AIDA",
     "schiff": "AIDAluna",
@@ -742,6 +776,7 @@
   },
 {
     "id": 12,
+    "validUntil": "2026-09-10",
     "title": "Bermuda, Florida & Bahamas ab New York",
     "reederei": "AIDA",
     "schiff": "AIDAluna",
@@ -760,6 +795,7 @@
   },
 {
   "id": 14,
+  "validUntil": "2026-09-30",
   "title": "ÖSTLICHE KARIBIK",
   "reederei": "MSC",
   "schiff": "MSC World America",
@@ -778,6 +814,7 @@
 },
 {
   "id": 15,
+  "validUntil": "2026-09-30",
   "title": "ÖSTLICHES MITTELMEER",
   "reederei": "MSC",
   "schiff": "MSC Fantasia",
@@ -796,6 +833,7 @@
 },
 {
   "id": 16,
+  "validUntil": "2026-09-30",
   "title": "WESTLICHES MITTELMEER",
   "reederei": "MSC",
   "schiff": "MSC Seaview",
@@ -814,6 +852,7 @@
 },
 {
   "id": 17,
+  "validUntil": "2026-09-30",
   "title": "WESTLICHES MITTELMEER",
   "reederei": "MSC",
   "schiff": "MSC World Europa",
@@ -832,6 +871,7 @@
 },
 {
   "id": 18,
+  "validUntil": "2026-09-30",
   "title": "NORWEGISCHE FJORDE",
   "reederei": "MSC",
   "schiff": "MSC Euribia",
@@ -850,6 +890,7 @@
 },
 {
   "id": 19,
+  "validUntil": "2026-09-30",
   "title": "NORWEGISCHE FJORDE",
   "reederei": "MSC",
   "schiff": "MSC Preziosa",
@@ -868,6 +909,7 @@
 },
 {
   "id": 20,
+  "validUntil": "2026-09-30",
   "title": "IRLAND UND GROSSBRITANNIEN",
   "reederei": "MSC",
   "schiff": "MSC Preziosa",
@@ -886,6 +928,7 @@
 },
 {
   "id": 21,
+  "validUntil": "2026-09-30",
   "title": "ADRIA & GRIECHENLAND AB KORFU",
   "reederei": "AIDA",
   "schiff": "AIDAblu",
@@ -904,6 +947,7 @@
 },
 {
   "id": 22,
+  "validUntil": "2026-09-30",
   "title": "KARIBIK & MITTELAMERIKA AB DOMINIKANISCHE REPUBLIK",
   "reederei": "AIDA",
   "schiff": "AIDAdiva",
@@ -922,6 +966,7 @@
 },
 		 {
   "id": 23,
+  "validUntil": "2026-09-30",
   "title": "THAILAND, MALAYSIA & SINGAPUR",
   "reederei": "AIDA",
   "schiff": "AIDAstella",
@@ -940,6 +985,7 @@
 },
          {
              id: 24,
+             validUntil: "2026-09-30",
              title: "WESTLICHE KARIBIK",
              reederei: "MSC",
              schiff: "MSC World America",
@@ -958,13 +1004,144 @@
          }
      ];
 
+     // Der erste Routenstopp ist zugleich der Abfahrtshafen.
+     function extractDeparturePort(route = '') {
+         const firstLeg = route.split(/<br\s*\/?>/i)[0] ?? '';
+         return firstLeg
+             .replace(/^[^:]+:\s*/, '')
+             .replace(/\s*\([^)]*\)/g, '')
+             .replace(/\s*,?\s*(Abfahrt|Ankunft)\s+\d{1,2}:\d{2}.*/i, '')
+             .trim();
+     }
+
+     offersData.forEach(offer => {
+         offer.departurePort = extractDeparturePort(offer.route);
+     });
+
+     // Diese Listen werden aus den tatsächlich sichtbaren Angebotsdaten erzeugt.
+     // Neue Reedereien, Regionen und Aktionen erscheinen daher ohne Codepflege.
+     function uniqueOfferValues(key) {
+         return [...new Set(getActiveOffers().map(offer => offer[key]).filter(Boolean))]
+             .sort((a, b) => a.localeCompare(b, 'de'));
+     }
+
+     function getBerlinClock(now = new Date()) {
+         const parts = new Intl.DateTimeFormat('en-CA', {
+             timeZone: 'Europe/Berlin',
+             year: 'numeric',
+             month: '2-digit',
+             day: '2-digit',
+             hour: '2-digit',
+             hourCycle: 'h23'
+         }).formatToParts(now);
+         const value = type => parts.find(part => part.type === type).value;
+         return { date: `${value('year')}-${value('month')}-${value('day')}`, hour: Number(value('hour')) };
+     }
+
+     function getOfferVisibilityKey(now = new Date()) {
+         const berlin = getBerlinClock(now);
+         return `${berlin.date}:${berlin.hour >= OFFER_EXPIRY_HOUR}`;
+     }
+
+     function isOfferActive(offer, now = new Date()) {
+         // Ohne Enddatum wird ein Angebot bewusst nicht veröffentlicht.
+         // So können abgelaufene Deals nicht versehentlich online bleiben.
+         if (!/^\d{4}-\d{2}-\d{2}$/.test(offer.validUntil)) return false;
+         const berlin = getBerlinClock(now);
+         return berlin.date < offer.validUntil || (berlin.date === offer.validUntil && berlin.hour < OFFER_EXPIRY_HOUR);
+     }
+
+     function getActiveOffers() {
+         return offersData.filter(isOfferActive);
+     }
+
+     function getCruiseLines() { return uniqueOfferValues('reederei'); }
+     function getRegions() { return uniqueOfferValues('region'); }
+     function getActions() { return uniqueOfferValues('aktion'); }
+
+     const SORT_LABELS = {
+         expiryAsc: 'Bald ablaufend',
+         priceAsc: 'Preis: niedrig nach hoch',
+         priceDesc: 'Preis: hoch nach niedrig',
+         departurePortAsc: 'Abfahrtshafen: A–Z',
+         cruiseLineAsc: 'Reederei: A–Z'
+     };
+
+     function sortOffers(offers) {
+         const byText = key => (a, b) => a[key].localeCompare(b[key], 'de');
+         const sorted = [...offers];
+
+         switch (activeSort) {
+             case 'priceAsc':
+                 return sorted.sort((a, b) => a.preisNumeric - b.preisNumeric || byText('title')(a, b));
+             case 'priceDesc':
+                 return sorted.sort((a, b) => b.preisNumeric - a.preisNumeric || byText('title')(a, b));
+             case 'departurePortAsc':
+                 return sorted.sort((a, b) => byText('departurePort')(a, b) || a.preisNumeric - b.preisNumeric);
+             case 'cruiseLineAsc':
+                 return sorted.sort((a, b) => byText('reederei')(a, b) || byText('title')(a, b));
+             default:
+                 // Angebote mit dem nächsten Ablaufdatum stehen bewusst zuerst.
+                 return sorted.sort((a, b) => a.validUntil.localeCompare(b.validUntil) || a.preisNumeric - b.preisNumeric);
+         }
+     }
+
+     function closeSortMenu() {
+         document.getElementById('sortMenu').hidden = true;
+         document.getElementById('sortButton').setAttribute('aria-expanded', 'false');
+     }
+
+     function initialiseSortControl() {
+         const button = document.getElementById('sortButton');
+         const menu = document.getElementById('sortMenu');
+
+         button.addEventListener('click', () => {
+             const isOpen = !menu.hidden;
+             menu.hidden = isOpen;
+             button.setAttribute('aria-expanded', String(!isOpen));
+         });
+
+         menu.addEventListener('click', event => {
+             const option = event.target.closest('[data-sort]');
+             if (!option) return;
+
+             activeSort = option.dataset.sort;
+             document.getElementById('sortButtonLabel').textContent = SORT_LABELS[activeSort];
+             menu.querySelectorAll('[data-sort]').forEach(item => item.removeAttribute('aria-current'));
+             option.setAttribute('aria-current', 'true');
+             closeSortMenu();
+             renderRoutes();
+         });
+     }
+
      document.addEventListener("DOMContentLoaded", () => {
+         const offersWithoutExpiry = offersData.filter(offer => !/^\d{4}-\d{2}-\d{2}$/.test(offer.validUntil));
+         if (offersWithoutExpiry.length) {
+             console.error('Diese Angebote benötigen ein gültiges validUntil-Datum:', offersWithoutExpiry.map(offer => offer.id));
+         }
+         initialiseSortControl();
          renderRoutes();
+
+         // Auch bei einer offenen Seite verschwinden abgelaufene Angebote
+         // spätestens eine Sekunde nach 18:00 Uhr deutscher Zeit.
+         let visibilityKey = getOfferVisibilityKey();
+         window.setInterval(() => {
+             const nextKey = getOfferVisibilityKey();
+             if (nextKey !== visibilityKey) {
+                 visibilityKey = nextKey;
+                 renderRoutes();
+             }
+         }, 1000);
 
          document.addEventListener('click', (e) => {
              if (!e.target.closest('.custom-multiselect')) {
                  document.querySelectorAll('.checkboxes-dropdown').forEach(d => d.classList.remove('open'));
              }
+             if (!e.target.closest('.sort-control')) closeSortMenu();
+         });
+
+         document.addEventListener('keydown', event => {
+             if (event.key === 'Escape') closeSortMenu();
          });
      });
 
@@ -981,7 +1158,7 @@
 
          // 1. Gültige Reedereien
          const validLines = new Set(
-             offersData.filter(o =>
+             getActiveOffers().filter(o =>
                  (selectedRegions.length === 0 || selectedRegions.includes(o.region)) &&
                  (selectedActions.length === 0 || selectedActions.includes(o.aktion)) &&
                  (selectedPrices.length === 0 || matchesPrice(o.preisNumeric, selectedPrices))
@@ -991,7 +1168,7 @@
          // 2. Gültige Preisspannen
          const validPrices = new Set(
              priceRangesList.filter(p =>
-                 offersData.some(o =>
+                 getActiveOffers().some(o =>
                      o.preisNumeric >= p.min && o.preisNumeric <= p.max &&
                      (selectedLines.length === 0 || selectedLines.includes(o.reederei)) &&
                      (selectedRegions.length === 0 || selectedRegions.includes(o.region)) &&
@@ -1002,7 +1179,7 @@
 
          // 3. Gültige Regionen
          const validRegions = new Set(
-             offersData.filter(o =>
+             getActiveOffers().filter(o =>
                  (selectedLines.length === 0 || selectedLines.includes(o.reederei)) &&
                  (selectedActions.length === 0 || selectedActions.includes(o.aktion)) &&
                  (selectedPrices.length === 0 || matchesPrice(o.preisNumeric, selectedPrices))
@@ -1011,7 +1188,7 @@
 
          // 4. Gültige Aktionen
          const validActions = new Set(
-             offersData.filter(o =>
+             getActiveOffers().filter(o =>
                  (selectedLines.length === 0 || selectedLines.includes(o.reederei)) &&
                  (selectedRegions.length === 0 || selectedRegions.includes(o.region)) &&
                  (selectedPrices.length === 0 || matchesPrice(o.preisNumeric, selectedPrices))
@@ -1021,7 +1198,7 @@
          // DOM Rendern für Reedereien
          const lineDrop = document.getElementById('cruiseLineDropdown');
          lineDrop.innerHTML = '';
-         cruiseLinesList.forEach(line => {
+         getCruiseLines().forEach(line => {
              const isAvailable = validLines.has(line);
              const isChecked = selectedLines.includes(line);
              const label = document.createElement('label');
@@ -1045,7 +1222,7 @@
          // DOM Rendern für Regionen
          const regionDrop = document.getElementById('regionDropdown');
          regionDrop.innerHTML = '';
-         regionsList.forEach(r => {
+         getRegions().forEach(r => {
              const isAvailable = validRegions.has(r);
              const isChecked = selectedRegions.includes(r);
              const label = document.createElement('label');
@@ -1057,7 +1234,7 @@
          // DOM Rendern für Aktionen
          const actionDrop = document.getElementById('actionDropdown');
          actionDrop.innerHTML = '';
-         actionsList.forEach(a => {
+         getActions().forEach(a => {
              const isAvailable = validActions.has(a);
              const isChecked = selectedActions.includes(a);
              const label = document.createElement('label');
@@ -1120,8 +1297,9 @@
 
          const grid = document.getElementById('routeGrid');
          grid.innerHTML = '';
+         const resultsCount = document.getElementById('resultsCount');
 
-         const filtered = offersData.filter(offer => {
+         const filtered = getActiveOffers().filter(offer => {
              if (selectedLines.length > 0 && !selectedLines.includes(offer.reederei)) return false;
              if (selectedRegions.length > 0 && !selectedRegions.includes(offer.region)) return false;
              if (selectedActions.length > 0 && !selectedActions.includes(offer.aktion)) return false;
@@ -1131,24 +1309,33 @@
              return true;
          });
 
+         resultsCount.textContent = `${filtered.length} ${filtered.length === 1 ? 'Angebot' : 'Angebote'} gefunden`;
+
          if (filtered.length === 0) {
              grid.innerHTML = '<div class="no-results">Keine passenden Angebote gefunden. Bitte passe deine Suchfilter an.</div>';
              return;
          }
 
-         filtered.forEach(offer => {
-             const card = document.createElement('div');
+         sortOffers(filtered).forEach(offer => {
+             const card = document.createElement('article');
              card.className = 'route-card';
 
              card.innerHTML = `
                  <div class="card-header">
+                     <span class="card-eyebrow">${offer.reederei}</span>
                      <h3>${offer.title}</h3>
                  </div>
                  <div class="image-container">
-                     <img src="${offer.image}" alt="${offer.title}">
-                     <div class="price-badge">${offer.preisDisplay}</div>
+                     <img src="${offer.image}" alt="${offer.title}" loading="lazy" decoding="async">
                  </div>
                  <div class="route-details-short">
+                     <div class="departure-port">
+                         <div class="departure-info">
+                             <i class="fa-solid fa-anchor" aria-hidden="true"></i>
+                             <div><span>Abfahrtshafen</span><strong>${offer.departurePort}</strong></div>
+                         </div>
+                         <div class="price-badge">${offer.preisDisplay}</div>
+                     </div>
                      <div class="detail-row"><span class="detail-label">Reederei:</span><span class="detail-value">${offer.reederei}</span></div>
                      <div class="detail-row"><span class="detail-label">Schiff:</span><span class="detail-value">${offer.schiff}</span></div>
                      <div class="detail-row"><span class="detail-label">Dauer:</span><span class="detail-value">${offer.dauer}</span></div>
