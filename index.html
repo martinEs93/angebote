@@ -1442,8 +1442,8 @@
                      <button class="btn btn-toggle" onclick="toggleDetails(${offer.id})" id="btn_det_${offer.id}">
                          Details & Routenverlauf <i class="fa-solid fa-chevron-down"></i>
                      </button>
-                     <button class="btn btn-share" type="button" onclick="toggleShare(${offer.id})" aria-expanded="false" aria-controls="share_${offer.id}" id="btn_share_${offer.id}">
-                         <i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Angebot teilen
+                     <button class="btn btn-share" type="button" onclick="shareOffer(${offer.id})" aria-expanded="false" aria-controls="share_${offer.id}" id="btn_share_${offer.id}">
+                         <i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Teilen
                      </button>
                      <div class="share-actions" id="share_${offer.id}" aria-label="Angebot teilen">
                          <a class="share-link" href="#" onclick="shareOnWhatsApp(${offer.id}); return false;"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
@@ -1499,6 +1499,24 @@
 
      function getOfferShareText(offer) {
          return `${offer.title} – ${offer.reederei}, ${offer.schiff}, ab ${offer.preisDisplay}`;
+     }
+
+     async function shareOffer(id) {
+         const offer = offersData.find(o => o.id === id);
+         const shareData = { title: offer.title, text: getOfferShareText(offer), url: getOfferShareUrl(offer) };
+
+         // Mobil öffnet dies den üblichen Teilen-Dialog mit den installierten Apps.
+         if (navigator.share) {
+             try {
+                 await navigator.share(shareData);
+             } catch (error) {
+                 // Abbrechen des Teilen-Dialogs ist keine Fehlermeldung.
+             }
+             return;
+         }
+
+         // Ältere Desktop-Browser erhalten die einzelnen Teilen-Optionen als Fallback.
+         toggleShare(id);
      }
 
      function toggleShare(id) {
