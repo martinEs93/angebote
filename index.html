@@ -270,6 +270,15 @@
      }
      .btn-toggle:hover, .btn-hide:hover { background-color: #e2e8f0; }
 
+     .share-actions { display:none; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px; }
+     .share-actions.open { display:grid; }
+     .btn-share { align-self:flex-end; width:auto; padding:8px 12px; color:var(--primary); background:#fff; border:1px solid rgba(0, 51, 102, .28); box-shadow:none; font-size:13px; }
+     .btn-share:hover { color:#fff; background:var(--primary); border-color:var(--primary); }
+     .share-link { display:flex; align-items:center; justify-content:center; gap:7px; min-width:0; padding:9px 8px; border:1px solid #d7e3ee; border-radius:7px; color:#23405e; background:#fff; text-decoration:none; font-size:12px; font-weight:700; transition:all .2s ease; }
+     .share-link:hover { color:var(--primary); border-color:var(--primary); background:#eef5fb; }
+     .share-link--wide { grid-column:1 / -1; }
+     .share-status { min-height:18px; margin:0; color:#587087; text-align:center; font-size:12px; }
+
      .details-expanded { display:none; padding:15px 20px; background:#f8fafc; border-top:1px solid #e2e8f0; font-size:13px; color:#2c3e50; line-height:1.6; }
      .details-expanded.open { display:block; }
      .legal-text { font-size: 11px; color: #718096; margin-top: 10px; line-height: 1.4; border-top: 1px solid #e2e8f0; padding-top: 8px; }
@@ -1363,7 +1372,9 @@
          grid.innerHTML = '';
          const resultsCount = document.getElementById('resultsCount');
 
+         const sharedOffer = Number(new URLSearchParams(window.location.search).get('offer'));
          const filtered = getActiveOffers().filter(offer => {
+             if (Number.isInteger(sharedOffer) && sharedOffer > 0 && offer.id !== sharedOffer) return false;
              if (selectedLines.length > 0 && !selectedLines.includes(offer.reederei)) return false;
              if (selectedRegions.length > 0 && !selectedRegions.includes(offer.region)) return false;
              if (selectedActions.length > 0 && !selectedActions.includes(offer.aktion)) return false;
@@ -1431,6 +1442,17 @@
                      <button class="btn btn-toggle" onclick="toggleDetails(${offer.id})" id="btn_det_${offer.id}">
                          Details & Routenverlauf <i class="fa-solid fa-chevron-down"></i>
                      </button>
+                     <button class="btn btn-share" type="button" onclick="toggleShare(${offer.id})" aria-expanded="false" aria-controls="share_${offer.id}" id="btn_share_${offer.id}">
+                         <i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Angebot teilen
+                     </button>
+                     <div class="share-actions" id="share_${offer.id}" aria-label="Angebot teilen">
+                         <a class="share-link" href="#" onclick="shareOnWhatsApp(${offer.id}); return false;"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+                         <a class="share-link" href="#" onclick="shareOnFacebook(${offer.id}); return false;"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i> Facebook</a>
+                         <a class="share-link" href="#" onclick="shareByEmail(${offer.id}); return false;"><i class="fa-regular fa-envelope" aria-hidden="true"></i> E-Mail</a>
+                         <button class="share-link" type="button" onclick="shareWithDevice(${offer.id})"><i class="fa-brands fa-instagram" aria-hidden="true"></i> Instagram &amp; mehr</button>
+                         <button class="share-link share-link--wide" type="button" onclick="copyOfferLink(${offer.id})"><i class="fa-regular fa-copy" aria-hidden="true"></i> Link kopieren</button>
+                     </div>
+                     <p class="share-status" id="share_status_${offer.id}" role="status" aria-live="polite"></p>
                  </div>
 
                  <div class="details-expanded" id="details_${offer.id}">
@@ -1464,6 +1486,74 @@
          } else {
              det.classList.add('open');
              btn.innerHTML = 'Details ausblenden <i class="fa-solid fa-chevron-up"></i>';
+         }
+     }
+
+     function getOfferShareUrl(offer) {
+         const url = new URL(window.location.href);
+         // Ein geteiltes Angebot soll unabhängig von aktuell gesetzten Filtern funktionieren.
+         url.search = '';
+         url.searchParams.set('offer', offer.id);
+         return url.toString();
+     }
+
+     function getOfferShareText(offer) {
+         return `${offer.title} – ${offer.reederei}, ${offer.schiff}, ab ${offer.preisDisplay}`;
+     }
+
+     function toggleShare(id) {
+         const panel = document.getElementById(`share_${id}`);
+         const button = document.getElementById(`btn_share_${id}`);
+         const isOpen = panel.classList.toggle('open');
+         button.setAttribute('aria-expanded', String(isOpen));
+     }
+
+     function setShareStatus(id, message) {
+         document.getElementById(`share_status_${id}`).textContent = message;
+     }
+
+     function shareOnWhatsApp(id) {
+         const offer = offersData.find(o => o.id === id);
+         const message = `${getOfferShareText(offer)}\n${getOfferShareUrl(offer)}`;
+         window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
+     }
+
+     function shareOnFacebook(id) {
+         const offer = offersData.find(o => o.id === id);
+         const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getOfferShareUrl(offer))}`;
+         window.open(url, '_blank', 'noopener');
+     }
+
+     function shareByEmail(id) {
+         const offer = offersData.find(o => o.id === id);
+         const subject = `Kreuzfahrt-Angebot: ${offer.title}`;
+         const body = `Schau dir dieses Kreuzfahrt-Angebot an:\n\n${getOfferShareText(offer)}\n\n${getOfferShareUrl(offer)}`;
+         window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+     }
+
+     async function copyOfferLink(id) {
+         const offer = offersData.find(o => o.id === id);
+         const text = `${getOfferShareText(offer)}\n${getOfferShareUrl(offer)}`;
+         try {
+             await navigator.clipboard.writeText(text);
+             setShareStatus(id, 'Link wurde kopiert.');
+         } catch (error) {
+             setShareStatus(id, 'Link konnte nicht automatisch kopiert werden.');
+         }
+     }
+
+     async function shareWithDevice(id) {
+         const offer = offersData.find(o => o.id === id);
+         const shareData = { title: offer.title, text: getOfferShareText(offer), url: getOfferShareUrl(offer) };
+         if (navigator.share) {
+             try {
+                 await navigator.share(shareData);
+             } catch (error) {
+                 // Abbrechen des Teilen-Dialogs ist keine Fehlermeldung.
+             }
+         } else {
+             await copyOfferLink(id);
+             setShareStatus(id, 'Link kopiert – bitte in Instagram oder einer anderen App einfügen.');
          }
      }
 
@@ -1519,5 +1609,3 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
  <script defer src="https://sibforms.com/forms/end-form/build/main.js"></script>
 </body>
 </html>
-
-
