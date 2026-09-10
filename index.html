@@ -1306,9 +1306,9 @@
          return offersData.filter(isOfferActive);
      }
 
-     function getFavoriteExpiringToday() {
+     function getFavoritesExpiringToday() {
          const todayInBerlin = getBerlinClock().date;
-         return offersData.find(offer =>
+         return offersData.filter(offer =>
              favoriteOfferIds.has(offer.id) &&
              offer.validUntil === todayInBerlin &&
              isOfferActive(offer)
@@ -1890,6 +1890,13 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
              return getActiveOffers().filter(offer => favoriteOfferIds.has(offer.id));
          }
 
+         function formatOfferNames(offers) {
+             const names = offers.map(offer => `„${offer.title}“`);
+             if (names.length < 2) return names[0] || '';
+             if (names.length === 2) return names.join(' und ');
+             return `${names.slice(0, -1).join(', ')} und ${names.at(-1)}`;
+         }
+
          function getFilterSummary() {
              const parts = [];
              if (selectedLines.length) parts.push(`Reederei: ${selectedLines.join(', ')}`);
@@ -1908,6 +1915,7 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
              if (advisorState.priority) parts.push(`Besonders wichtig: ${advisorState.priority}.`);
              if (advisorState.focusOffer) parts.push(`Favorisiertes Angebot: ${advisorState.focusOffer.title} (${advisorState.focusOffer.preisDisplay}).`);
              if (advisorState.favoriteTitles?.length) parts.push(`Gespeicherte Favoriten: ${advisorState.favoriteTitles.join(', ')}.`);
+             if (advisorState.urgentOfferTitles?.length) parts.push(`Zeitkritische Favoriten, gültig bis heute 18 Uhr: ${advisorState.urgentOfferTitles.join(', ')}.`);
              const filters = getFilterSummary();
              if (filters.length) parts.push(`Aktuelle Auswahl: ${filters.join('; ')}.`);
              if (advisorState.details) parts.push(`Weitere Wünsche: ${advisorState.details}`);
@@ -1916,9 +1924,11 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
 
          function refreshContactLinks() {
              const message = buildContactMessage();
-             const subject = advisorState.focusOffer
-                 ? `Verfügbarkeitsprüfung: ${advisorState.focusOffer.title}`
-                 : 'Persönliche Beratung zu Kreuzfahrtangeboten';
+             const subject = advisorState.urgentOfferTitles?.length > 1
+                 ? `Verfügbarkeitsprüfung: ${advisorState.urgentOfferTitles.length} Favoriten`
+                 : advisorState.focusOffer
+                     ? `Verfügbarkeitsprüfung: ${advisorState.focusOffer.title}`
+                     : 'Persönliche Beratung zu Kreuzfahrtangeboten';
              whatsapp.href = `https://wa.me/${MY_PHONE_NUMBER}?text=${encodeURIComponent(message)}`;
              mail.href = `mailto:${MY_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
          }
@@ -1958,7 +1968,7 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
              const favorites = getActiveFavoriteOffers();
              advisorState.goal = 'Ich möchte meine gespeicherten Favoriten prüfen';
              advisorState.favoriteTitles = favorites.map(offer => offer.title);
-             const expiringFavorite = getFavoriteExpiringToday();
+             const expiringFavorites = getFavoritesExpiringToday();
              if (!favorites.length) {
                  addMessage('Du hast aktuell noch keine gespeicherten Favoriten. Ich helfe dir gern, Angebote nach deinen Wünschen einzugrenzen.');
                  setActions('Wie möchtest du weitergehen?', [
@@ -1967,13 +1977,20 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
                  ]);
                  return;
              }
-             const names = favorites.slice(0, 2).map(offer => `„${offer.title}“`).join(' und ');
-             const more = favorites.length > 2 ? ` sowie ${favorites.length - 2} weitere` : '';
-             addMessage(`Du hast ${favorites.length} Favorit${favorites.length === 1 ? '' : 'en'} gespeichert: ${names}${more}.`);
-             if (expiringFavorite) addMessage(`Wichtig: „${expiringFavorite.title}“ ist nur noch heute gültig.`);
+             addMessage(`Du hast ${favorites.length} Favorit${favorites.length === 1 ? '' : 'en'} gespeichert: ${formatOfferNames(favorites)}.`);
+             if (expiringFavorites.length === favorites.length) {
+                 addMessage(`Wichtig: Alle ${expiringFavorites.length} gespeicherten Favoriten sind nur noch heute bis 18 Uhr gültig: ${formatOfferNames(expiringFavorites)}.`);
+             } else if (expiringFavorites.length) {
+                 addMessage(`Wichtig: ${expiringFavorites.length} deiner ${favorites.length} Favorit${favorites.length === 1 ? '' : 'en'} sind nur noch heute bis 18 Uhr gültig: ${formatOfferNames(expiringFavorites)}.`);
+             }
              setActions('Was soll ich für dich vorbereiten?', [
                  { label: 'Favoriten vergleichen', run: () => finishWithContact('Wir vergleichen deine Favoriten gern hinsichtlich Route, Kabine, Preis und Verfügbarkeit.') },
-                 { label: 'Verfügbarkeit prüfen', run: () => { advisorState.focusOffer = expiringFavorite || favorites[0]; finishWithContact(`Wir prüfen gern die aktuelle Verfügbarkeit für „${advisorState.focusOffer.title}“.`); } },
+                 { label: expiringFavorites.length > 1 ? 'Verfügbarkeit aller Favoriten prüfen' : 'Verfügbarkeit prüfen', run: () => {
+                     advisorState.urgentOfferTitles = expiringFavorites.map(offer => offer.title);
+                     advisorState.focusOffer = expiringFavorites.length === 1 ? expiringFavorites[0] : null;
+                     const offersToCheck = expiringFavorites.length ? expiringFavorites : favorites;
+                     finishWithContact(`Wir prüfen gern die aktuelle Verfügbarkeit für ${offersToCheck.length === 1 ? formatOfferNames(offersToCheck) : `alle ${offersToCheck.length} gespeicherten Favoriten`}.`);
+                 } },
                  { label: 'Andere Angebote suchen', run: startOfferFinder }
              ]);
          }
@@ -2006,12 +2023,19 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
          function startConversation() {
              advisorState = {};
              messages.replaceChildren();
-             const expiringFavorite = getFavoriteExpiringToday();
-             if (expiringFavorite) {
-                 advisorState.focusOffer = expiringFavorite;
-                 addMessage(`Willkommen zurück! Dein Favorit „${expiringFavorite.title}“ ist nur noch heute gültig. Soll ich die Verfügbarkeit direkt für dich prüfen?`);
+             const expiringFavorites = getFavoritesExpiringToday();
+             if (expiringFavorites.length) {
+                 advisorState.urgentOfferTitles = expiringFavorites.map(offer => offer.title);
+                 advisorState.focusOffer = expiringFavorites.length === 1 ? expiringFavorites[0] : null;
+                 const expiringMessage = expiringFavorites.length === 1
+                     ? `Willkommen zurück! Dein Favorit ${formatOfferNames(expiringFavorites)} ist nur noch heute bis 18 Uhr gültig. Soll ich die Verfügbarkeit direkt für dich prüfen?`
+                     : `Willkommen zurück! ${expiringFavorites.length} deiner Favoriten sind nur noch heute bis 18 Uhr gültig: ${formatOfferNames(expiringFavorites)}. Soll ich die Verfügbarkeit direkt für alle prüfen?`;
+                 addMessage(expiringMessage);
                  setActions('Ich kann sofort helfen', [
-                     { label: 'Ja, Verfügbarkeit prüfen', run: () => { advisorState.goal = 'Verfügbarkeitsprüfung für einen heute endenden Favoriten'; finishWithContact(`Wir prüfen jetzt gern, ob „${expiringFavorite.title}“ noch verfügbar ist.`); } },
+                     { label: expiringFavorites.length > 1 ? 'Ja, alle prüfen' : 'Ja, Verfügbarkeit prüfen', run: () => {
+                         advisorState.goal = 'Verfügbarkeitsprüfung für heute endende Favoriten';
+                         finishWithContact(`Wir prüfen jetzt gern die Verfügbarkeit für ${expiringFavorites.length === 1 ? formatOfferNames(expiringFavorites) : `alle ${expiringFavorites.length} heute endenden Favoriten`}.`);
+                     } },
                      { label: 'Meine Favoriten ansehen', run: checkFavorites },
                      { label: 'Andere Angebote finden', run: startOfferFinder }
                  ]);
@@ -2063,4 +2087,13 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
      common: {
        selectedList: '{quantity} Liste ausgewählt',
        selectedLists: '{quantity} Listen ausgewählt',
-      
+       selectedOption: '{quantity} ausgewählt',
+       selectedOptions: '{quantity} ausgewählt',
+     }
+   };
+
+   var AUTOHIDE = Boolean(0);
+ </script>
+ <script defer src="https://sibforms.com/forms/end-form/build/main.js"></script>
+</body>
+</html>
