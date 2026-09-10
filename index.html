@@ -3,7 +3,7 @@
 <head>
  <meta charset="UTF-8" />
  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
- <title> Top Kreuzfahrtangebote - Core Cruises</title>
+ <title>Kreuzfahrtangebote - Core Cruises</title>
 
  <link rel="icon" href="favicon.png" type="image/png">
  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -361,6 +361,7 @@
      /* Der unsichtbare, geschlossene Dialog darf keine Klicks auf der Seite abfangen. */
      .consultation-chat:not(.is-open) { pointer-events:none; }
      .consultation-chat:not(.is-open) .consultation-chat__toggle { pointer-events:auto; }
+     .consultation-chat:not(.is-open) .consultation-chat__hint { pointer-events:auto; }
      .consultation-chat__panel { width:min(360px, calc(100vw - 32px)); padding:18px; border:1px solid rgba(0,51,102,.12); border-radius:16px; background:#fff; box-shadow:0 12px 32px rgba(10,26,47,.22); transform:translateY(12px) scale(.97); opacity:0; visibility:hidden; transition:opacity .25s ease, transform .25s ease, visibility .25s; }
      .consultation-chat.is-open .consultation-chat__panel { transform:translateY(0) scale(1); opacity:1; visibility:visible; }
      .consultation-chat__header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; color:var(--primary); }
@@ -379,7 +380,15 @@
      .consultation-chat__toggle { display:grid; place-items:center; width:56px; height:56px; padding:0; border:0; border-radius:50%; color:#fff; background:linear-gradient(135deg, #003366, #001f3f); box-shadow:0 6px 18px rgba(0,31,63,.3); cursor:pointer; font-size:22px; transition:transform .2s, box-shadow .2s; }
      .consultation-chat__toggle:hover { transform:translateY(-2px) scale(1.04); box-shadow:0 9px 22px rgba(0,31,63,.38); }
      .consultation-chat.is-open .consultation-chat__toggle { display:none; }
-     @media (max-width:768px) { .consultation-chat { right:15px; bottom:15px; } }
+     .consultation-chat__hint { display:none; }
+     @media (max-width:768px) {
+         .consultation-chat { right:15px; bottom:15px; }
+         .consultation-chat.has-mobile-hint .consultation-chat__hint { display:flex; align-items:center; gap:8px; width:min(250px, calc(100vw - 94px)); margin:0 0 -2px; padding:9px 11px; border:0; border-radius:12px; color:#173b60; background:#fff; box-shadow:0 7px 20px rgba(10,26,47,.2); font:inherit; text-align:left; cursor:pointer; }
+         .consultation-chat__hint img { width:29px; height:29px; border-radius:50%; object-fit:cover; background:#e8f0f7; }
+         .consultation-chat__hint span { display:grid; gap:1px; font-size:11px; line-height:1.28; }
+         .consultation-chat__hint strong { color:#003366; font-size:12px; }
+         .consultation-chat.has-mobile-hint .consultation-chat__toggle { width:50px; height:50px; font-size:19px; }
+     }
 
      /* Intelligenter Beratungs-Concierge */
      .consultation-chat__panel { padding:0; overflow:hidden; }
@@ -669,6 +678,10 @@
          </div>
          <div class="smart-chat__utility"><button class="smart-chat__restart" id="smartChatRestart" type="button">Beratung neu starten</button></div>
      </div>
+     <button class="consultation-chat__hint" id="consultationChatHint" type="button" aria-label="Persönliche Beratung öffnen">
+         <img src="favicon.png" alt="">
+         <span><strong>Core Cruises</strong>Brauchst du Hilfe bei einem Angebot?</span>
+     </button>
      <button class="consultation-chat__toggle" id="consultationChatToggle" type="button" aria-label="Persönliche Beratung öffnen" aria-expanded="false">
          <i class="fa-regular fa-comment-dots" aria-hidden="true"></i>
      </button>
@@ -1316,7 +1329,7 @@
   "route": "Tag 1: La Romana (Dominikanische Republik)<br>Tag 2: Seetag<br>Tag 3: St. John's (Antigua und Barbuda)<br>Tag 4: Basseterre (Saint Kitts und Nevis)<br>Tag 5: Philipsburg (Sint Maarten)<br>Tag 6: Road Town / Tortola (Britische Jungferninseln)<br>Tag 7: Samaná (Dominikanische Republik)<br>Tag 8: Seetag<br>Tag 9: Montego Bay (Jamaika)<br>Tag 10: Seetag<br>Tag 11: Colón (Panama)<br>Tag 12: Cartagena (Kolumbien)<br>Tag 13: Santa Marta (Kolumbien)<br>Tag 14: La Romana (Dominikanische Republik)",
   "legal": "* PREMIUMPreis: Preis pro Person bei 2er-Belegung (Balkonkabine), inkl. An- und Abreisepaket, jeweils limitiertes Kontingent.<br>** Bordguthaben: Das Bordguthaben wird im Aktionszeitraum 01.-30.09.2026 für ausgewählte Reisen von November 2026 bis Juni 2027 bei Neubuchung in den Tarifen COMFORT ALL IN, PREMIUM ALL IN, PREMIUM, CLASSIC ALL IN, CLASSIC und LIGHT gewährt. Es gilt pro Kabine bei Belegung mit zwei Erwachsenen im 1. und 2. Bett. Nach der Buchung muss im Aktionszeitraum der Aktionscode SUPERSEPTEMBER auf aida.de/myaida eingelöst werden. Limitiertes Kontingent.<br>AIDA Cruises, German Branch of Costa Crociere S. p. A., Am Strande 3 d, 18055 Rostock. Es gelten die aktuellen AIDA Reisebedingungen und Informationen auf aida.de/agb"
 },
-{
+		 {
   "id": 23,
   "validUntil": "2026-09-30",
   "title": "THAILAND, MALAYSIA & SINGAPUR",
@@ -1334,101 +1347,6 @@
   "addons": "AIDA Flug auf Wunsch verfügbar",
   "route": "Tag 1: Laem Chabang (Thailand)<br>Tag 2: Laem Chabang (Thailand)<br>Tag 3: Ko Samui (Thailand)<br>Tag 4: Seetag<br>Tag 5: Seetag<br>Tag 6: Penang (Malaysia)<br>Tag 7: Phuket (Thailand)<br>Tag 8: Langkawi (Malaysia)<br>Tag 9: Port Klang (Malaysia)<br>Tag 10: Singapur (Singapur)<br>Tag 11: Singapur (Singapur)<br>Tag 12: Singapur (Singapur)<br>Tag 13: Seetag<br>Tag 14: Laem Chabang (Thailand)",
   "legal": "* PREMIUM Preis: Preis pro Person bei 2er-Belegung (Balkonkabine), limitiertes Kontingent.<br>** Bordguthaben: Das Bordguthaben wird im Aktionszeitraum 01.-30.09.2026 für ausgewählte Reisen von November 2026 bis Juni 2027 bei Neubuchung in den Tarifen COMFORT ALL IN, PREMIUM ALL IN, PREMIUM, CLASSIC ALL IN, CLASSIC und LIGHT gewährt. Es gilt pro Kabine bei Belegung mit zwei Erwachsenen im 1. und 2. Bett. Nach der Buchung muss im Aktionszeitraum der Aktionscode SUPERSEPTEMBER auf aida.de/myaida eingelöst werden. Limitiertes Kontingent.<br>AIDA Cruises, German Branch of Costa Crociere S. p. A., Am Strande 3 d, 18055 Rostock. Es gelten die aktuellen AIDA Reisebedingungen und Informationen auf aida.de/agb"
-},
-{
-  "id": 50,
-  "validUntil": "2026-09-17",
-  "title": "Mediterrane Schätze mit Korsika",
-  "reederei": "AIDA",
-  "schiff": "AIDAcosma",
-  "dauer": "7 Tage (31.10.-07.11.2026)",
-  "kabine": "Innenkabine",
-  "tarif": "LIGHT",
-  "preisNumeric": 599,
-  "preisDisplay": "599,-€ p.P.*",
-  "region": "Mittelmeer",
-  "aktion": "AIDA Verlockung der Woche",
-  "image": "https://i.postimg.cc/HnX6T8vy/IMG-1105.png",
-  "promo": "AIDA Verlockung der Woche",
-  "addons": "Balkonkabine ab 849,-€ p.P.**<br>AIDA Flug auf Wunsch verfügbar",
-  "route": "Tag 1: Palma de Mallorca (Mallorca)<br>Tag 2: Seetag<br>Tag 3: La Spezia (Italien)<br>Tag 4: Civitavecchia (Italien)<br>Tag 5: Ajaccio (Korsika)<br>Tag 6: Seetag<br>Tag 7: Barcelona (Spanien)<br>Tag 8: Palma de Mallorca (Mallorca)",
-  "legal": "* LIGHT Preis pro Person bei 2er-Belegung (Innenkabine/**Balkonkabine). Limitiertes Kontingent. Gültig von Donnerstag, 10.09.2026, bis Donnerstag, 17.09.2026. AIDA Cruises, German Branch of Costa Crociere S. p. A., Am Strande 3 d, 18055 Rostock Es gelten die aktuellen AIDA Reisebedingungen und Informationen auf aida.de/agb"
-},
-{
-  "id": 51,
-  "validUntil": "2026-09-17",
-  "title": "Mediterrane Schätze mit Korsika",
-  "reederei": "AIDA",
-  "schiff": "AIDAcosma",
-  "dauer": "7 Tage (30.10.-06.11.2026)",
-  "kabine": "Innenkabine",
-  "tarif": "LIGHT",
-  "preisNumeric": 679,
-  "preisDisplay": "679,-€ p.P.*",
-  "region": "Mittelmeer",
-  "aktion": "AIDA Verlockung der Woche",
-  "image": "https://i.postimg.cc/HnX6T8vy/IMG-1105.png",
-  "promo": "AIDA Verlockung der Woche",
-  "addons": "Balkonkabine ab 879,-€ p.P.**<br>AIDA Flug auf Wunsch verfügbar",
-  "route": "FTag 1: Barcelona (Spanien)<br>Tag 2: Palma de Mallorca (Mallorca)<br>STag 3: Seetag<br>Tag 4: La Spezia (Italien)<br>Tag 5: Civitavecchia (Italien)<br>Tag 6: Ajaccio (Korsika)<br>Tag 7: Seetag<br>Tag 8: Barcelona (Spanien)",
-  "legal": "* LIGHT Preis pro Person bei 2er-Belegung (Innenkabine/**Balkonkabine). Limitiertes Kontingent. Gültig von Donnerstag, 10.09.2026, bis Donnerstag, 17.09.2026. AIDA Cruises, German Branch of Costa Crociere S. p. A., Am Strande 3 d, 18055 Rostock Es gelten die aktuellen AIDA Reisebedingungen und Informationen auf aida.de/agb"
-},
-{
-  id: 52,
-  validUntil: "2026-09-17",
-  title: "Mediterrane Schätze mit Korsika ab Barcelona 2",
-  reederei: "AIDA",
-  schiff: "AIDAcosma",
-  dauer: "8 Tage (30.10.-07.11.2026)",
-  kabine: "Balkonkabine",
-  tarif: "LIGHT",
-  preisNumeric: 1049,
-  preisDisplay: "1.049,-€ p.P.*",
-  region: "Mittelmeer",
-  aktion: "AIDA Verlockung der Woche",
-  image: "https://i.postimg.cc/HnX6T8vy/IMG-1105.png",
-  promo: "AIDA Verlockung der Woche",
-  addons: "AIDA Flug auf Wunsch verfügbar",
-  route: "Tag 1: Barcelona (Spanien)<br>Tag 2: Palma de Mallorca (Mallorca)<br>Tag 3: Seetag<br>Tag 4: La Spezia (Italien)<br>Tag 5: Civitavecchia (Italien)<br>Tag 6: Ajaccio (Korsika)<br>Tag 7: Seetag<br>Tag 8: Barcelona (Spanien)<br>Tag 9: Palma de Mallorca (Mallorca)",
-  legal: "* LIGHT Preis pro Person bei 2er-Belegung in der Balkonkabine. Limitiertes Kontingent. Gültig von Donnerstag, 10.09.2026, bis Donnerstag, 17.09.2026. AIDA Cruises, German Branch of Costa Crociere S. p. A., Am Strande 3 d, 18055 Rostock. Es gelten die aktuellen AIDA Reisebedingungen und Informationen auf aida.de/agb"
-},
-{
-  "id": 53,
-  "validUntil": "2026-09-17",
-  "title": "ANDALUSIEN & KANAREN AB MALLORCA",
-  "reederei": "AIDA",
-  "schiff": "AIDAcosma",
-  "dauer": "9 Tage (03.12.2026 – 12.12.2026)",
-  "kabine": "Innenkabine",
-  "tarif": "CLASSIC",
-  "preisNumeric": 679,
-  "preisDisplay": "679,-€ p.P.*",
-  "region": "Kanaren",
-  "aktion": "AIDA Verlockung der Woche",
-  "image": "https://i.postimg.cc/SscXYFXb/DE-AIDA-BIG-PMI09042-de-DE.gif",
-  "promo": "AIDA Verlockung der Woche",
-  "addons": "Balkonkabine ab 1099,-€ p.P.**<br>AIDA Flug auf Wunsch verfügbar",
-  "route": "Tag 1: Palma de Mallorca (Mallorca)<br>Tag 2: Cartagena (Spanien)<br>Tag 3: Málaga (Spanien)<br>Tag 4: Seetag<br>Tag 5: Seetag<br>Tag 6: Santa Cruz de La Palma (La Palma)<br>Tag 7: Las Palmas (Gran Canaria)<br>Tag 8: Puerto del Rosario (Fuerteventura)<br>Tag 9: Arrecife (Lanzarote)<br>Tag 10: Las Palmas (Gran Canaria)",
-  "legal": "* CLASSIC Preis pro Person bei 2er-Belegung (Innenkabine/**Balkonkabine). Limitiertes Kontingent. Gültig von Donnerstag, 10.09.2026, bis Donnerstag, 17.09.2026. AIDA Cruises, German Branch of Costa Crociere S. p. A., Am Strande 3 d, 18055 Rostock Es gelten die aktuellen AIDA Reisebedingungen und Informationen auf aida.de/agb"
-},
-{
-  id: 54,
-  validUntil: "2026-09-17",
-  title: "Von Hamburg in die Dominikanische Republik",
-  reederei: "AIDA",
-  schiff: "AIDAperla",
-  dauer: "21 Tage (05.11.-26.11.2026)",
-  kabine: "Meerblickkabine",
-  tarif: "CLASSIC",
-  preisNumeric: 2754,
-  preisDisplay: "2.754,-€ p.P.*",
-  region: "Karibik & Antillen",
-  aktion: "AIDA Verlockung der Woche",
-  image: "https://i.postimg.cc/wB9yRTKW/DE-AIDA-BIG-HAM21032-de-DE.gif",
-  promo: "AIDA Verlockung der Woche",
-  addons: "inkl. Flug",
-  route: "Tag 1: Hamburg<br>Tag 2: Seetag<br>Tag 3: Southampton (Großbritannien)<br>Tag 4: Seetag<br>Tag 5: A Coruña (Spanien)<br>Tag 6: Leixões (Portugal)<br>Tag 7: Lissabon (Portugal)<br>Tag 8: Seetag<br>Tag 9: Arrecife (Lanzarote)<br>Tag 10: Las Palmas (Gran Canaria)<br>Tag 11: Santa Cruz de La Palma (La Palma)<br>Tag 12–18: Seetage<br>Tag 19: St. John's (Antigua und Barbuda)<br>Tag 20: Basseterre (Saint Kitts und Nevis)<br>Tag 21: Philipsburg (Sint Maarten)<br>Tag 22: Seetag<br>Tag 23: La Romana (Dominikanische Republik)",
-  legal: "* LIGHT Preis pro Person bei 2er-Belegung in der Meerblickkabine, inklusive Flug. Limitiertes Kontingent. Gültig von Donnerstag, 10.09.2026, bis Donnerstag, 17.09.2026. AIDA Cruises, German Branch of Costa Crociere S. p. A., Am Strande 3 d, 18055 Rostock. Es gelten die aktuellen AIDA Reisebedingungen und Informationen auf aida.de/agb"
 },
          {
              id: 24,
@@ -1541,10 +1459,17 @@
              month: '2-digit',
              day: '2-digit',
              hour: '2-digit',
+             minute: '2-digit',
+             second: '2-digit',
              hourCycle: 'h23'
          }).formatToParts(now);
          const value = type => parts.find(part => part.type === type).value;
-         return { date: `${value('year')}-${value('month')}-${value('day')}`, hour: Number(value('hour')) };
+         return {
+             date: `${value('year')}-${value('month')}-${value('day')}`,
+             hour: Number(value('hour')),
+             minute: Number(value('minute')),
+             second: Number(value('second'))
+         };
      }
 
      function getOfferVisibilityKey(now = new Date()) {
@@ -1562,6 +1487,35 @@
 
      function getActiveOffers() {
          return offersData.filter(isOfferActive);
+     }
+
+     let offerVisibilityKey = getOfferVisibilityKey();
+     let offerExpiryRefreshTimer = null;
+
+     function millisecondsUntilNextOfferVisibilityBoundary(now = new Date()) {
+         const berlin = getBerlinClock(now);
+         const currentSecondOfDay = berlin.hour * 3600 + berlin.minute * 60 + berlin.second;
+         const nextBoundarySecond = berlin.hour < OFFER_EXPIRY_HOUR
+             ? OFFER_EXPIRY_HOUR * 3600
+             : 24 * 3600;
+         // Ein kleiner Puffer verhindert, dass exakt an der Grenzsekunde noch der alte
+         // Browserzeitwert gelesen wird.
+         return Math.max(1000, (nextBoundarySecond - currentSecondOfDay) * 1000 + 150);
+     }
+
+     function refreshOffersForTimeChange(force = false) {
+         const nextKey = getOfferVisibilityKey();
+         if (!force && nextKey === offerVisibilityKey) return;
+         offerVisibilityKey = nextKey;
+         renderRoutes();
+     }
+
+     function scheduleOfferExpiryRefresh() {
+         window.clearTimeout(offerExpiryRefreshTimer);
+         offerExpiryRefreshTimer = window.setTimeout(() => {
+             refreshOffersForTimeChange();
+             scheduleOfferExpiryRefresh();
+         }, millisecondsUntilNextOfferVisibilityBoundary());
      }
 
      function getFavoritesExpiringToday() {
@@ -1641,16 +1595,15 @@
          loadFiltersFromUrl();
          renderRoutes();
 
-         // Auch bei einer offenen Seite verschwinden abgelaufene Angebote
-         // spätestens eine Sekunde nach 18:00 Uhr deutscher Zeit.
-         let visibilityKey = getOfferVisibilityKey();
-         window.setInterval(() => {
-             const nextKey = getOfferVisibilityKey();
-             if (nextKey !== visibilityKey) {
-                 visibilityKey = nextKey;
-                 renderRoutes();
-             }
-         }, 1000);
+         // Auch bei einer bereits geöffneten Seite wird exakt an der nächsten
+         // Berliner 18-Uhr-Grenze neu gerendert. Bei Rückkehr in den Tab erfolgt
+         // zusätzlich eine sofortige Prüfung.
+         offerVisibilityKey = getOfferVisibilityKey();
+         scheduleOfferExpiryRefresh();
+         window.addEventListener('focus', () => refreshOffersForTimeChange());
+         document.addEventListener('visibilitychange', () => {
+             if (!document.hidden) refreshOffersForTimeChange();
+         });
 
          document.addEventListener('click', (e) => {
              if (!e.target.closest('.custom-multiselect')) {
@@ -2170,6 +2123,7 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
      (function initSmartConsultationChat() {
          const chat = document.getElementById('consultationChat');
          const toggle = document.getElementById('consultationChatToggle');
+         const mobileHint = document.getElementById('consultationChatHint');
          const close = document.getElementById('consultationChatClose');
          const messages = document.getElementById('smartChatMessages');
          const actions = document.getElementById('smartChatActions');
@@ -2180,14 +2134,19 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
          const restart = document.getElementById('smartChatRestart');
          const whatsapp = document.getElementById('consultationChatWhatsApp');
          const mail = document.getElementById('consultationChatMail');
-         if (!chat || !toggle || !close || !messages || !actions || !suggestion || !suggestionLabel || !form || !input || !restart || !whatsapp || !mail) return;
+         if (!chat || !toggle || !mobileHint || !close || !messages || !actions || !suggestion || !suggestionLabel || !form || !input || !restart || !whatsapp || !mail) return;
 
          let submitTextAnswer = null;
          let advisorState = {};
 
          function setOpen(isOpen) {
              chat.classList.toggle('is-open', isOpen);
+             if (isOpen) chat.classList.remove('has-mobile-hint');
              toggle.setAttribute('aria-expanded', String(isOpen));
+         }
+
+         function isMobileChatViewport() {
+             return window.matchMedia?.('(max-width: 768px)').matches;
          }
 
          function addMessage(text, fromUser = false) {
@@ -2260,6 +2219,79 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
              return parts;
          }
 
+         function getCurrentOfferCriteria() {
+             return {
+                 lines:[...selectedLines],
+                 regions:[...selectedRegions],
+                 actions:[...selectedActions],
+                 prices:[...selectedPrices]
+             };
+         }
+
+         function hasOfferCriteria(criteria) {
+             return criteria.lines.length || criteria.regions.length || criteria.actions.length || criteria.prices.length;
+         }
+
+         function matchesOfferCriteria(offer, criteria) {
+             return (!criteria.lines.length || criteria.lines.includes(offer.reederei)) &&
+                 (!criteria.regions.length || criteria.regions.includes(offer.region)) &&
+                 (!criteria.actions.length || criteria.actions.includes(offer.aktion)) &&
+                 (!criteria.prices.length || matchesPrice(offer.preisNumeric, criteria.prices));
+         }
+
+         function getMatchingOffers(criteria) {
+             return getActiveOffers().filter(offer => matchesOfferCriteria(offer, criteria));
+         }
+
+         function getOfferCriteriaDescription(criteria) {
+             const parts = [];
+             if (criteria.lines.length) parts.push(`Reederei: ${criteria.lines.join(' oder ')}`);
+             if (criteria.regions.length) parts.push(`Region: ${criteria.regions.join(' oder ')}`);
+             if (criteria.actions.length) parts.push(`Aktion: ${criteria.actions.join(' oder ')}`);
+             if (criteria.prices.length) {
+                 const labels = criteria.prices.map(value => priceRangesList.find(range => range.value === value)?.label || value);
+                 parts.push(`Budget: ${labels.join(' oder ')}`);
+             }
+             return parts.join(' · ');
+         }
+
+         function uniqueMatchingOfferValues(matches, key) {
+             return [...new Set(matches.map(offer => offer[key]).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'de'));
+         }
+
+         function getOfferExpiryDescription(offer) {
+             const berlin = getBerlinClock();
+             if (offer.validUntil !== berlin.date) return '';
+             const minutesLeft = (OFFER_EXPIRY_HOUR - berlin.hour) * 60 - berlin.minute;
+             if (minutesLeft <= 0) return 'Die Angebotsfrist ist bereits abgelaufen.';
+             if (minutesLeft <= 60) return `Nur noch etwa ${minutesLeft} Minute${minutesLeft === 1 ? '' : 'n'} verfügbar.`;
+             return `Heute noch bis ${OFFER_EXPIRY_HOUR}:00 Uhr verfügbar.`;
+         }
+
+         function applyOfferCriteriaToPage(criteria) {
+             showingFavorites = false;
+             selectedLines = [...criteria.lines];
+             selectedRegions = [...criteria.regions];
+             selectedActions = [...criteria.actions];
+             selectedPrices = [...criteria.prices];
+             updateDynamicFilters();
+             renderRoutes();
+         }
+
+         function showOfferResults(criteria) {
+             const matches = getMatchingOffers(criteria);
+             advisorState.criteria = criteria;
+             if (!matches.length) {
+                 offerRecovery(criteria);
+                 return;
+             }
+             applyOfferCriteriaToPage(criteria);
+             const description = getOfferCriteriaDescription(criteria);
+             addMessage(`Ich zeige dir jetzt ${matches.length} passende ${matches.length === 1 ? 'Reise' : 'Reisen'}${description ? ` für ${description}` : ''} direkt auf der Angebotsseite.`);
+             setOpen(false);
+             window.requestAnimationFrame(() => document.getElementById('routeGrid')?.scrollIntoView({ behavior:'smooth', block:'start' }));
+         }
+
          function buildContactMessage() {
              const parts = ['Hallo Core Cruises, ich wünsche eine persönliche Beratung zu einem Kreuzfahrtangebot.'];
              if (advisorState.goal) parts.push(`Anliegen: ${advisorState.goal}.`);
@@ -2267,6 +2299,10 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
              if (advisorState.focusOffer) parts.push(`Favorisiertes Angebot: ${advisorState.focusOffer.title} (${advisorState.focusOffer.preisDisplay}).`);
              if (advisorState.favoriteTitles?.length) parts.push(`Gespeicherte Favoriten: ${advisorState.favoriteTitles.join(', ')}.`);
              if (advisorState.urgentOfferTitles?.length) parts.push(`Zeitkritische Favoriten, gültig bis heute 18 Uhr: ${advisorState.urgentOfferTitles.join(', ')}.`);
+             if (advisorState.criteria) {
+                 const criteriaDescription = getOfferCriteriaDescription(advisorState.criteria);
+                 if (criteriaDescription) parts.push(`Im Chat eingegrenzt: ${criteriaDescription}.`);
+             }
              const filters = getFilterSummary();
              if (filters.length) parts.push(`Aktuelle Auswahl: ${filters.join('; ')}.`);
              if (advisorState.details) parts.push(`Weitere Wünsche: ${advisorState.details}`);
@@ -2292,27 +2328,159 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
              ]);
          }
 
+         function getOpenOfferPreferences() {
+             advisorState.openPreferences ||= new Set();
+             return advisorState.openPreferences;
+         }
+
+         function addOfferExitActions(criteria, choices) {
+             const count = getMatchingOffers(criteria).length;
+             return [
+                 ...choices,
+                 { label:`${count} ${count === 1 ? 'Angebot' : 'Angebote'} anzeigen`, run:() => showOfferResults(criteria) },
+                 { label:'Direkt persönlich beraten', run:() => {
+                     advisorState.criteria = criteria;
+                     finishWithContact('Sehr gern – ich habe deine bisherige Auswahl bereits für unser Beratungsteam vorbereitet.');
+                 } }
+             ];
+         }
+
+         function offerRecovery(criteria) {
+             advisorState.criteria = criteria;
+             const choices = [];
+             if (criteria.prices.length) choices.push({ label:'Budget wieder öffnen', run:() => continueOfferConcierge({ ...criteria, prices:[] }) });
+             if (criteria.actions.length) choices.push({ label:'Aktion wieder öffnen', run:() => continueOfferConcierge({ ...criteria, actions:[] }) });
+             if (criteria.lines.length) choices.push({ label:'Reederei wieder öffnen', run:() => continueOfferConcierge({ ...criteria, lines:[] }) });
+             if (criteria.regions.length) choices.push({ label:'Region wieder öffnen', run:() => continueOfferConcierge({ ...criteria, regions:[] }) });
+             choices.push({ label:'Neue Angebotsberatung starten', run:() => startOfferFinder(true) });
+             addMessage(`Mit ${getOfferCriteriaDescription(criteria) || 'dieser Auswahl'} finde ich aktuell kein aktives Angebot. Ich ändere nur den Punkt, den du auswählst – alle übrigen Wünsche bleiben bestehen.`);
+             setActions('Was darf ich anpassen?', choices);
+         }
+
+         function askOfferRegion(criteria) {
+             const regions = uniqueMatchingOfferValues(getMatchingOffers(criteria), 'region');
+             addMessage('Wohin möchtest du reisen? Ich zeige danach nur Reiseziele, für die gerade aktive Angebote verfügbar sind.');
+             setActions('Reiseziel auswählen', addOfferExitActions(criteria, [
+                 ...regions.slice(0, 6).map(region => ({ label:region, run:() => continueOfferConcierge({ ...criteria, regions:[region] }) })),
+                 { label:'Beim Reiseziel bin ich offen', run:() => { getOpenOfferPreferences().add('region'); continueOfferConcierge(criteria); } }
+             ]));
+         }
+
+         function askOfferBudget(criteria) {
+             const matches = getMatchingOffers(criteria);
+             const ranges = priceRangesList.filter(range => matches.some(offer => offer.preisNumeric >= range.min && offer.preisNumeric <= range.max));
+             addMessage('Damit ich attraktive Angebote sinnvoll einordne: Welcher Preisrahmen passt ungefähr pro Person?');
+             setActions('Budget auswählen', addOfferExitActions(criteria, [
+                 ...ranges.map(range => ({ label:range.label, run:() => continueOfferConcierge({ ...criteria, prices:[range.value] }) })),
+                 { label:'Budget ist offen', run:() => { getOpenOfferPreferences().add('budget'); continueOfferConcierge(criteria); } }
+             ]));
+         }
+
+         function askOfferCruiseLine(criteria) {
+             const lines = uniqueMatchingOfferValues(getMatchingOffers(criteria), 'reederei');
+             addMessage(`In deiner Auswahl sind Angebote von ${lines.join(' und ')} verfügbar. Hast du eine bevorzugte Reederei?`);
+             setActions('Reederei auswählen', addOfferExitActions(criteria, [
+                 ...lines.map(line => ({ label:line, run:() => continueOfferConcierge({ ...criteria, lines:[line] }) })),
+                 { label:'Reederei ist offen', run:() => { getOpenOfferPreferences().add('line'); continueOfferConcierge(criteria); } }
+             ]));
+         }
+
+         function askOfferAction(criteria) {
+             const actionsAvailable = uniqueMatchingOfferValues(getMatchingOffers(criteria), 'aktion');
+             addMessage('Soll ich auf eine bestimmte Aktion achten oder einfach die aktuell passendsten Angebote zeigen?');
+             setActions('Aktion auswählen', addOfferExitActions(criteria, [
+                 ...actionsAvailable.slice(0, 5).map(action => ({ label:action, run:() => continueOfferConcierge({ ...criteria, actions:[action] }) })),
+                 { label:'Aktion ist offen', run:() => { getOpenOfferPreferences().add('action'); continueOfferConcierge(criteria); } }
+             ]));
+         }
+
+         function askOfferPersonalDetails(criteria) {
+             advisorState.criteria = criteria;
+             addMessage('Die passende Auswahl steht. Für eine wirklich konkrete Anfrage: Was ist dir zusätzlich wichtig?');
+             setActions('Persönlich verfeinern', [
+                 { label:'Balkon oder Meerblick', run:() => { advisorState.details = 'Kabinenwunsch: Balkon oder Meerblick'; finishWithContact('Wir prüfen gern passende Kabinenvarianten und Verfügbarkeit.'); } },
+                 { label:'Flug dazubuchen', run:() => { advisorState.details = 'Flug auf Wunsch dazubuchbar'; finishWithContact('Wir prüfen gern passende Flugoptionen zur ausgewählten Reise.'); } },
+                 { label:'Für Familie / Gruppe', run:() => askForText(
+                     'Wie viele Erwachsene und Kinder reisen ungefähr? So können wir passende Kabinen mitprüfen.',
+                     'z. B. 2 Erwachsene, 2 Kinder',
+                     answer => {
+                         advisorState.details = answer || 'Reisegruppe – bitte Kabinenoptionen prüfen';
+                         if (answer) addMessage(answer, true);
+                         finishWithContact('Perfekt – wir bereiten eine passende Anfrage für deine Reisegruppe vor.');
+                     }
+                 )},
+                 { label:'Angebote jetzt anzeigen', run:() => showOfferResults(criteria) }
+             ]);
+         }
+
+         function showOfferConciergeSummary(criteria) {
+             const matches = getMatchingOffers(criteria);
+             advisorState.criteria = criteria;
+             const bestOffer = [...matches].sort((a, b) => a.preisNumeric - b.preisNumeric)[0];
+             const urgency = bestOffer ? getOfferExpiryDescription(bestOffer) : '';
+             addMessage(`Sehr gut – ${matches.length} ${matches.length === 1 ? 'passendes Angebot' : 'passende Angebote'} bleiben übrig.${bestOffer ? ` Der aktuell günstigste Einstieg liegt bei ${bestOffer.preisDisplay} für „${bestOffer.title}“.` : ''}${urgency ? ` ${urgency}` : ''}`);
+             setActions('Wie möchtest du weitergehen?', [
+                 { label:'Angebote vergleichen', run:() => askOfferPersonalDetails(criteria) },
+                 { label:'Jetzt Angebote anzeigen', run:() => showOfferResults(criteria) },
+                 { label:'Verfügbarkeit persönlich prüfen', run:() => finishWithContact('Sehr gern – wir prüfen die Verfügbarkeit und passende Kabinen persönlich für dich.') },
+                 { label:'Neue Suche starten', run:() => startOfferFinder(true) }
+             ]);
+         }
+
+         function continueOfferConcierge(criteria) {
+             advisorState.criteria = criteria;
+             const matches = getMatchingOffers(criteria);
+             if (!matches.length) {
+                 offerRecovery(criteria);
+                 return;
+             }
+             const open = getOpenOfferPreferences();
+             if (!criteria.regions.length && !open.has('region')) {
+                 askOfferRegion(criteria);
+                 return;
+             }
+             if (!criteria.prices.length && !open.has('budget')) {
+                 askOfferBudget(criteria);
+                 return;
+             }
+             if (!criteria.lines.length && uniqueMatchingOfferValues(matches, 'reederei').length > 1 && !open.has('line')) {
+                 askOfferCruiseLine(criteria);
+                 return;
+             }
+             if (!criteria.actions.length && uniqueMatchingOfferValues(matches, 'aktion').length > 1 && !open.has('action')) {
+                 askOfferAction(criteria);
+                 return;
+             }
+             showOfferConciergeSummary(criteria);
+         }
+
          function askForWishDetails() {
              askForText(
-                 'Magst du mir noch Reisezeit, Personenzahl, Abfahrtshafen oder einen besonderen Wunsch nennen? Du kannst auch „ohne weitere Wünsche“ schreiben.',
-                 'z. B. Mai 2027, 2 Personen, ab Hamburg',
+                 'Nenne mir gern den einen Wunsch, der für dein Angebot entscheidend ist – zum Beispiel Kabine, Flug, Reisegruppe oder Ziel.',
+                 'z. B. Balkon, Flug ab Hamburg, 2 Erwachsene',
                  answer => {
                      advisorState.details = answer || 'Keine weiteren Angaben';
-                     addMessage(advisorState.details, true);
-                     finishWithContact('Sehr gut – damit können wir gezielter für dich suchen.');
+                     if (answer) addMessage(answer, true);
+                     finishWithContact('Danke – damit bereiten wir deine Anfrage gezielt vor.');
                  }
              );
          }
 
-         function startOfferFinder() {
+         function startOfferFinder(ignoreCurrentSelection = false) {
              advisorState.goal = 'Ich möchte ein passendes Angebot finden';
-             addMessage('Worauf soll ich bei deiner Auswahl zuerst achten?');
-             setActions('Deine Priorität', [
-                 { label: 'Bester Preis', run: () => { advisorState.priority = 'ein besonders gutes Preis-Leistungs-Verhältnis'; askForWishDetails(); } },
-                 { label: 'Passende Route', run: () => { advisorState.priority = 'eine passende Route'; askForWishDetails(); } },
-                 { label: 'Reisezeit', run: () => { advisorState.priority = 'der passende Reisezeitraum'; askForWishDetails(); } },
-                 { label: 'Ich bin noch offen', run: () => { advisorState.priority = 'Inspiration und eine persönliche Empfehlung'; askForWishDetails(); } }
-             ]);
+             if (ignoreCurrentSelection) advisorState.openPreferences = new Set();
+             const criteria = ignoreCurrentSelection ? { lines:[], regions:[], actions:[], prices:[] } : getCurrentOfferCriteria();
+             if (hasOfferCriteria(criteria) && !ignoreCurrentSelection) {
+                 addMessage(`Ich sehe bereits deine Auswahl: ${getOfferCriteriaDescription(criteria)}. Soll ich genau diese Angebote weiter eingrenzen oder eine neue Suche beginnen?`);
+                 setActions('So starten wir', [
+                     { label:'Aktuelle Auswahl verfeinern', run:() => continueOfferConcierge(criteria) },
+                     { label:'Neue Angebotsuche', run:() => startOfferFinder(true) },
+                     { label:'Angebote jetzt anzeigen', run:() => showOfferResults(criteria) }
+                 ]);
+                 return;
+             }
+             addMessage('Ich finde mit dir in wenigen Schritten ein Angebot, das wirklich passt. Du kannst die Ergebnisse jederzeit direkt anzeigen lassen – ich frage nur nach Kriterien, die deine Auswahl verbessern.');
+             continueOfferConcierge(criteria);
          }
 
          function checkFavorites() {
@@ -2348,10 +2516,10 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
 
          function adviseCurrentSelection() {
              advisorState.goal = 'Ich möchte die aktuelle Angebotsauswahl beraten lassen';
-             const filters = getFilterSummary();
-             if (filters.length) {
-                 addMessage(`Ich sehe deine aktuelle Auswahl: ${filters.join(' · ')}.`);
-                 askForWishDetails();
+             const criteria = getCurrentOfferCriteria();
+             if (hasOfferCriteria(criteria)) {
+                 addMessage(`Ich sehe deine aktuelle Auswahl: ${getOfferCriteriaDescription(criteria)}. Ich berücksichtige diese Vorgaben und frage nur noch nach sinnvollen, noch offenen Kriterien.`);
+                 continueOfferConcierge(criteria);
              } else {
                  addMessage('Du hast noch keine Filter gesetzt. Kein Problem – ich helfe dir, die passende Auswahl zu finden.');
                  startOfferFinder();
@@ -2412,6 +2580,7 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
              handler(answer);
          });
          toggle.addEventListener('click', () => setOpen(true));
+         mobileHint.addEventListener('click', () => setOpen(true));
          close.addEventListener('click', () => setOpen(false));
          restart.addEventListener('click', startConversation);
          document.addEventListener('keydown', event => {
@@ -2419,7 +2588,12 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
          });
 
          startConversation();
-         window.setTimeout(() => setOpen(true), 1000);
+         if (isMobileChatViewport()) {
+             chat.classList.add('has-mobile-hint');
+             setOpen(false);
+         } else {
+             window.setTimeout(() => setOpen(true), 1000);
+         }
      })();
  </script>
 
