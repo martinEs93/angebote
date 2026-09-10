@@ -563,6 +563,70 @@
      let selectedRegions = [];
      let selectedActions = [];
      let activeSort = 'expiryAsc';
+     
+     // URL-Parameter: reederei, preis, region und aktion.
+     // Mehrere Werte sind möglich, z. B. ?aktion=LAST+MINUTE&aktion=CATCH+OF+THE+WEEK
+     const URL_FILTERS = {
+         reederei: {
+             get: () => selectedLines,
+             set: values => { selectedLines = values; },
+             values: () => getCruiseLines()
+         },
+         preis: {
+             get: () => selectedPrices,
+             set: values => { selectedPrices = values; },
+             values: () => priceRangesList.map(range => range.value)
+         },
+         region: {
+             get: () => selectedRegions,
+             set: values => { selectedRegions = values; },
+             values: () => getRegions()
+         },
+         aktion: {
+             get: () => selectedActions,
+             set: values => { selectedActions = values; },
+             values: () => getActions()
+         }
+     };
+
+     function updateFilterSummaryLabels() {
+         document.getElementById('cruiseLineSelectText').textContent =
+             selectedLines.length ? `${selectedLines.length} Reederei(en) gewählt` : 'Alle Reedereien';
+         document.getElementById('priceSelectText').textContent =
+             selectedPrices.length ? `${selectedPrices.length} Preisklasse(n) gewählt` : 'Alle Preisklassen';
+         document.getElementById('regionSelectText').textContent =
+             selectedRegions.length ? `${selectedRegions.length} Region(en) gewählt` : 'Alle Regionen';
+         document.getElementById('actionSelectText').textContent =
+             selectedActions.length ? `${selectedActions.length} Aktion(en) gewählt` : 'Alle Aktionen';
+     }
+
+     function loadFiltersFromUrl() {
+         const params = new URLSearchParams(window.location.search);
+
+         Object.entries(URL_FILTERS).forEach(([parameter, filter]) => {
+             // Wiederholte Parameter und kommaseparierte Werte werden akzeptiert.
+             const requestedValues = params.getAll(parameter)
+                 .flatMap(value => value.split(','))
+                 .map(value => value.trim())
+                 .filter(Boolean);
+             const allowedValues = filter.values();
+             filter.set([...new Set(requestedValues.filter(value => allowedValues.includes(value)))]);
+         });
+
+         updateFilterSummaryLabels();
+     }
+
+     function saveFiltersToUrl() {
+         const url = new URL(window.location.href);
+
+         Object.entries(URL_FILTERS).forEach(([parameter, filter]) => {
+             url.searchParams.delete(parameter);
+             filter.get().forEach(value => url.searchParams.append(parameter, value));
+         });
+
+         window.history.replaceState({}, '', url);
+     }
+
 
      const offersData = [
          {
@@ -1120,6 +1184,7 @@
              console.error('Diese Angebote benötigen ein gültiges validUntil-Datum:', offersWithoutExpiry.map(offer => offer.id));
          }
          initialiseSortControl();
+         loadFiltersFromUrl();
          renderRoutes();
 
          // Auch bei einer offenen Seite verschwinden abgelaufene Angebote
@@ -1253,25 +1318,29 @@
 
      function handleLineChange() {
          selectedLines = Array.from(document.querySelectorAll('#cruiseLineDropdown input[type="checkbox"]:checked')).map(cb => cb.value);
-         document.getElementById('cruiseLineSelectText').textContent = selectedLines.length > 0 ? `${selectedLines.length} Reederei(en) gewählt` : 'Alle Reedereien';
+         updateFilterSummaryLabels();
+         saveFiltersToUrl();
          renderRoutes();
      }
 
      function handlePriceChange() {
          selectedPrices = Array.from(document.querySelectorAll('#priceDropdown input[type="checkbox"]:checked')).map(cb => cb.value);
-         document.getElementById('priceSelectText').textContent = selectedPrices.length > 0 ? `${selectedPrices.length} Preisklasse(n) gewählt` : 'Alle Preisklassen';
+         updateFilterSummaryLabels();
+         saveFiltersToUrl();
          renderRoutes();
      }
 
      function handleRegionChange() {
          selectedRegions = Array.from(document.querySelectorAll('#regionDropdown input[type="checkbox"]:checked')).map(cb => cb.value);
-         document.getElementById('regionSelectText').textContent = selectedRegions.length > 0 ? `${selectedRegions.length} Region(en) gewählt` : 'Alle Regionen';
+         updateFilterSummaryLabels();
+         saveFiltersToUrl();
          renderRoutes();
      }
 
      function handleActionChange() {
          selectedActions = Array.from(document.querySelectorAll('#actionDropdown input[type="checkbox"]:checked')).map(cb => cb.value);
-         document.getElementById('actionSelectText').textContent = selectedActions.length > 0 ? `${selectedActions.length} Aktion(en) gewählt` : 'Alle Aktionen';
+         updateFilterSummaryLabels();
+         saveFiltersToUrl();
          renderRoutes();
      }
 
@@ -1281,13 +1350,8 @@
          selectedRegions = [];
          selectedActions = [];
 
-         document.querySelectorAll('.checkboxes-dropdown input[type="checkbox"]').forEach(cb => cb.checked = false);
-
-         document.getElementById('cruiseLineSelectText').textContent = 'Alle Reedereien';
-         document.getElementById('priceSelectText').textContent = 'Alle Preisklassen';
-         document.getElementById('regionSelectText').textContent = 'Alle Regionen';
-         document.getElementById('actionSelectText').textContent = 'Alle Aktionen';
-
+         updateFilterSummaryLabels();
+         saveFiltersToUrl();
          renderRoutes();
      }
 
@@ -1455,3 +1519,5 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
  <script defer src="https://sibforms.com/forms/end-form/build/main.js"></script>
 </body>
 </html>
+
+
