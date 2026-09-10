@@ -246,6 +246,21 @@
 
      .promo-box { background: #fff5f5; border: 1px solid #fed7d7; border-radius: 6px; padding: 8px 12px; margin-top: 10px; font-size: 13px; color: #c53030; font-weight: 600; }
      .addons-box { background: #f0fff4; border: 1px solid #c6f6d5; border-radius: 6px; padding: 8px 12px; margin-top: 10px; font-size: 12px; color: #22543d; }
+     .departure-prices { margin:16px 0 0; padding:13px; border:1px solid #d8e4ee; border-radius:9px; background:#f8fafc; }
+     .departure-prices h4 { margin:0 0 9px; color:var(--primary); font-size:14px; }
+     .departure-prices p { margin:0 0 10px; color:#526a7e; font-size:12px; }
+     .departure-price-list { display:grid; gap:6px; max-height:290px; overflow-y:auto; padding-right:3px; }
+     .departure-price-item { display:flex; align-items:center; justify-content:space-between; gap:10px; width:100%; padding:8px 9px; border:1px solid #e1e9f0; border-radius:7px; background:#fff; color:inherit; font:inherit; font-size:12px; text-align:left; cursor:pointer; transition:border-color .16s ease, background-color .16s ease, transform .16s ease; }
+     .departure-price-item:hover { border-color:#7ba8ce; background:#f4f9fd; }
+     .departure-price-item:focus-visible { outline:3px solid rgba(0,67,122,.28); outline-offset:2px; }
+     .departure-price-item.is-best { border-color:#77bc90; background:#f2fbf5; }
+     .departure-price-item.is-selected { border-color:var(--primary); background:#e8f3fc; box-shadow:0 0 0 2px rgba(0,67,122,.13); }
+     .departure-price-dates { display:grid; min-width:0; gap:3px; }
+     .departure-price-item time { color:#2c3e50; font-weight:600; }
+     .departure-price-badge { display:inline-flex; width:max-content; padding:2px 6px; color:#176738; background:#dff5e5; border-radius:999px; font-size:10px; font-weight:800; letter-spacing:.03em; text-transform:uppercase; }
+     .departure-price-item strong { flex:0 0 auto; color:var(--primary); font-size:13px; }
+     .departure-selection-note { margin:10px 0 0; padding:8px 9px; color:#315c7f; background:#e8f3fc; border-radius:7px; font-size:12px; line-height:1.45; }
+     .departure-selection-note.is-required { color:#8a5312; background:#fff4df; }
 
      .actions { padding:15px 20px; display:flex; flex-direction:column; gap:10px; background:#fafbfc; border-top:1px solid #e2e8f0; }
      .actions .collapsed, .actions .expanded { display:flex; gap:10px; flex-direction:column; }
@@ -675,6 +690,150 @@
          { label: "über 1000€", value: "1001-99999", min: 1001, max: 99999 }
      ];
 
+     // MSC Winter Special – gültig für Neubuchungen bis 22.10.2026.
+     // Bei Angeboten mit mehreren Preisen ist jeder Preis fest einer Abfahrt zugeordnet.
+     const WINTER_SPECIAL_LEGAL = `*<br>Das Angebot ist gültig für Neubuchungen bis 22.10.2026, vorbehaltlich der Verfügbarkeit, und ist mit dem MSC Voyagers Clubrabatt und mit weiteren Angeboten kombinierbar. Der Rabatt für die Getränkepakete wird nur dann gewährt, wenn diese direkt bei der Kreuzfahrtbuchung ausgewählt werden. Kreuzfahrten in Südamerika und Südafrika sowie MSC World Cruises sind von diesem Angebot ausgeschlossen. Der Einzelkabinenzuschlag beträgt 100%, soweit nicht anders vermerkt. Bitte beachten Sie, dass auf einzelnen Abfahrten abweichende Einzelkabinenzuschläge anfallen können.<br><br>Das Getränkepaket Easy ist in unseren Bars, Buffet-, Hauptrestaurants verfügbar, nicht aber auf Privatinseln wie Ocean Cay in den Spezialitätenrestaurants und Signature Cafés &amp; Bars von Venchi 1878, im MSC Starship Club, in den Cafés von Lavazza sowie Jean Philippe Chocolate, Coffee, Crepes &amp; Gelato. Getränkepromotions an Bord sind ausgeschlossen. Die Bar-Servicegebühr ist inbegriffen. Das All-Inclusive Getränkepaket Easy ist für Neubuchungen auf 15 alkoholische Getränke pro Person/Tag limitiert.<br><br>Das All-Inclusive Getränkepaket Premium Extra beinhaltet Getränke bis zu einem Preis von €14 oder $16 und ist in unseren Bars, Buffet-, Haupt- &amp; Spezialitätenrestaurants sowie auf Privatinseln wie Ocean Cay verfügbar. Nicht gültig in Signature Cafés &amp; Bars (z. B. MSC Starship Club, Venchi 1878, Jean Philippe Maury). Die Bar-Servicegebühr ist inbegriffen. Das All-Inclusive Getränkepaket Premium Extra ist auf 15 alkoholische Getränke pro Person/Tag limitiert.<br><br>Die Kreuzfahrtpreise verstehen sich pro Person und Kreuzfahrt. Der Gesamtreisepreis enthält die Hotel-Servicegebühr pro Person bei einer Standard-Doppelbelegung. Die obligatorische Hotel-Servicegebühr ist damit integrierter Bestandteil des Gesamtreisepreises und gilt nicht für Kinder unter 2 Jahren. Im Kreuzfahrtpreis ist keine Versicherung enthalten. Die Preise variieren je nach Kreuzfahrt und sind abhängig von der Verfügbarkeit.<br><br>MSC Cruises S.A., Avenue Eugène‑Pittard 40, 1206 Genf, Schweiz. Es gelten die aktuellen Reisebedingungen von MSC Cruises: <a href="https://www.msccruises.de/agb" target="_blank" rel="noopener">www.msccruises.de/agb</a>`;
+     const WINTER_SPECIAL_ADDONS = `<strong>Zubuchbare Optionen:</strong><br>• <strong>Getränkepaket Easy:</strong> Basis-Auswahl an alkoholischen &amp; alkoholfreien Getränken bereits ab <strong>10 €</strong> p.P./Nacht<br>• <strong>Getränkepaket Premium Extra:</strong> Exklusive Vielfalt &amp; Premium-Auswahl bereits ab <strong>20 €</strong> p.P./Nacht`;
+     const winterDateFormatter = new Intl.DateTimeFormat('de-DE', { weekday:'short', day:'2-digit', month:'short', year:'numeric' });
+     const winterEuro = value => `${new Intl.NumberFormat('de-DE').format(value)},-€`;
+     const winterDeparture = (start, end, price) => ({
+         start,
+         end,
+         price,
+         label: `${winterDateFormatter.format(new Date(`${start}T12:00:00`))} – ${winterDateFormatter.format(new Date(`${end}T12:00:00`))}`
+     });
+     const winterFixedPriceDepartures = (price, dates) => dates.map(([start, end]) => winterDeparture(start, end, price));
+     const winterVariablePriceDepartures = dates => dates.map(([start, end, price]) => winterDeparture(start, end, price));
+     const createWinterSpecialOffer = details => {
+         const lowestPrice = Math.min(...details.departurePrices.map(departure => departure.price));
+         return {
+             validUntil: '2026-10-22',
+             reederei: 'MSC',
+             tarif: 'BELLA',
+             aktion: 'MSC Winter Special',
+             promo: 'MSC Winter Special',
+             legal: WINTER_SPECIAL_LEGAL,
+             addons: WINTER_SPECIAL_ADDONS,
+             ...details,
+             preisNumeric: lowestPrice,
+             preisDisplay: `ab ${winterEuro(lowestPrice)} p.P.*`
+         };
+     };
+     const WORLD_ASIA_GENOA_ROUTE = 'Tag 1: Genua (Abfahrt 18:00)<br>Tag 2: Civitavecchia (07:00–18:00)<br>Tag 3: Messina (12:00–20:00)<br>Tag 4: Valletta (09:00–17:00)<br>Tag 5: Seetag (An Bord Aktivitäten)<br>Tag 6: Barcelona (08:00–18:00)<br>Tag 7: Marseille (08:00–18:00)<br>Tag 8: Genua (Ankunft 08:00)';
+     const WORLD_ASIA_BARCELONA_ROUTE = 'Tag 1: Barcelona (Abfahrt 18:00)<br>Tag 2: Marseille (08:00–18:00)<br>Tag 3: Genua (08:00–18:00)<br>Tag 4: Civitavecchia (07:00–18:00)<br>Tag 5: Messina (12:00–20:00)<br>Tag 6: Valletta (09:00–17:00)<br>Tag 7: Seetag (An Bord Aktivitäten)<br>Tag 8: Barcelona (Ankunft 08:00)';
+     const WORLD_AMERICA_PUERTO_ROUTE = 'Tag 1: Miami (Abfahrt 18:00)<br>Tag 2: Seetag (An Bord Aktivitäten)<br>Tag 3: Puerto Plata (09:00–17:00)<br>Tag 4: San Juan (09:00–23:00)<br>Tag 5: Seetag (An Bord Aktivitäten)<br>Tag 6: Seetag (An Bord Aktivitäten)<br>Tag 7: Ocean Cay MSC Marine Reserve (08:00–20:00)<br>Tag 8: Miami (Ankunft 07:00)';
+     const WORLD_AMERICA_COZUMEL_ROUTE = 'Tag 1: Miami (Abfahrt 17:00)<br>Tag 2: Seetag<br>Tag 3: Isla de Roatán (09:00–18:00)<br>Tag 4: Costa Maya (08:00–17:00)<br>Tag 5: Cozumel (09:00–19:00)<br>Tag 6: Seetag<br>Tag 7: Ocean Cay MSC Marine Reserve (08:00–20:00)<br>Tag 8: Miami (Ankunft 07:00)';
+     const WORLD_AMERICA_14_COZUMEL_ROUTE = 'Tag 1: Miami (Abfahrt 17:00)<br>Tag 2: Seetag<br>Tag 3: Isla de Roatán (09:00–18:00)<br>Tag 4: Costa Maya (08:00–17:00)<br>Tag 5: Cozumel (09:00–19:00)<br>Tag 6: Seetag<br>Tag 7: Ocean Cay MSC Marine Reserve (08:00–20:00)<br>Tag 8: Miami (07:00–16:30)<br>Tag 9: Seetag<br>Tag 10: Puerto Plata (09:00–17:00)<br>Tag 11: San Juan (09:00–23:00)<br>Tag 12–13: Seetage<br>Tag 14: Ocean Cay MSC Marine Reserve (07:00–18:00)<br>Tag 15: Miami (Ankunft 07:00)';
+     const WORLD_AMERICA_14_PUERTO_ROUTE = 'Tag 1: Miami (Abfahrt 18:00)<br>Tag 2: Seetag<br>Tag 3: Puerto Plata (09:00–17:00)<br>Tag 4: San Juan (09:00–23:00)<br>Tag 5–6: Seetage<br>Tag 7: Ocean Cay MSC Marine Reserve (08:00–20:00)<br>Tag 8: Miami (07:00–17:00)<br>Tag 9: Seetag<br>Tag 10: Isla de Roatán (09:00–18:00)<br>Tag 11: Costa Maya (08:00–17:00)<br>Tag 12: Cozumel (09:00–19:00)<br>Tag 13: Seetag<br>Tag 14: Ocean Cay MSC Marine Reserve (08:00–20:00)<br>Tag 15: Miami (Ankunft 07:00)';
+     const MSC_OPERA_ROUTE = 'Tag 1: La Romana (Abfahrt 23:30)<br>Tag 2: Catalina Island (Tenderbetrieb 07:00–17:00)<br>Tag 3: Seetag<br>Tag 4: Bridgetown (09:00–19:00)<br>Tag 5: Fort-de-France (08:00–19:00)<br>Tag 6: Pointe-à-Pitre (07:00–16:00)<br>Tag 7: Road Town (07:30–15:30)<br>Tag 8: La Romana (Ankunft 09:00)';
+
+     const winterSpecialOffers = [
+         createWinterSpecialOffer({
+             id: 25, title: '7 Nächte Karibik & Antillen ab Miami', schiff: 'MSC World America', dauer: '8 Tage · 7 Nächte (Nov 2026 – Mär 2027)', kabine: 'Innenkabine', region: 'Karibik & Antillen', image: 'https://i.postimg.cc/7LdpHQ6Q/World-America-ost.png',
+             route: 'Tag 1: Miami (Abfahrt 18:00)<br>Tag 2: Seetag (An Bord Aktivitäten)<br>Tag 3: Puerto Plata (09:00–17:00)<br>Tag 4: San Juan (09:00–23:00)<br>Tag 5: Seetag (An Bord Aktivitäten)<br>Tag 6: Seetag (An Bord Aktivitäten)<br>Tag 7: Ocean Cay MSC Marine Reserve (08:00–20:00)<br>Tag 8: Miami (Ankunft 07:00)',
+             departurePrices: winterVariablePriceDepartures([['2026-11-28','2026-12-05',594],['2026-12-12','2026-12-19',611],['2026-12-26','2027-01-02',1544],['2027-01-09','2027-01-16',744],['2027-01-23','2027-01-30',767],['2027-02-06','2027-02-13',863],['2027-02-20','2027-02-27',843],['2027-03-06','2027-03-13',741],['2027-03-20','2027-03-27',891]])
+         }),
+         createWinterSpecialOffer({
+             id: 26, title: '7 Nächte Karibik ab Miami', schiff: 'MSC World America', dauer: '8 Tage · 7 Nächte (Nov 2026 – Mär 2027)', kabine: 'Innenkabine', region: 'Karibik & Antillen', image: 'https://i.postimg.cc/sDdrrY4t/UVD4.jpg',
+             route: 'Tag 1: Miami (Abfahrt 17:00)<br>Tag 2: Seetag<br>Tag 3: Isla de Roatán (09:00–18:00)<br>Tag 4: Costa Maya (08:00–17:00)<br>Tag 5: Cozumel (09:00–19:00)<br>Tag 6: Seetag<br>Tag 7: Ocean Cay MSC Marine Reserve (08:00–20:00)<br>Tag 8: Miami (Ankunft 07:00)',
+             departurePrices: winterVariablePriceDepartures([['2026-11-21','2026-11-28',800],['2026-12-05','2026-12-12',594],['2026-12-19','2026-12-26',878],['2027-01-02','2027-01-09',834],['2027-01-16','2027-01-23',880],['2027-01-30','2027-02-06',970],['2027-02-13','2027-02-20',943],['2027-02-27','2027-03-06',1011],['2027-03-13','2027-03-20',824],['2027-03-27','2027-04-03',884]])
+         }),
+         createWinterSpecialOffer({
+             id: 27, title: '14 Nächte Karibik ab Miami', schiff: 'MSC World America', dauer: '15 Tage · 14 Nächte (Nov 2026 – Apr 2027)', kabine: 'Innenkabine', region: 'Karibik & Antillen', image: 'https://i.postimg.cc/s2pWT9mt/UVD7.png',
+             route: 'Tag 1: Miami (Abfahrt 17:00)<br>Tag 2: Seetag<br>Tag 3: Isla de Roatán (09:00–18:00)<br>Tag 4: Costa Maya (08:00–17:00)<br>Tag 5: Cozumel (09:00–19:00)<br>Tag 6: Seetag<br>Tag 7: Ocean Cay MSC Marine Reserve (08:00–20:00)<br>Tag 8: Miami (07:00–16:30)<br>Tag 9: Seetag<br>Tag 10: Puerto Plata (09:00–17:00)<br>Tag 11: San Juan (09:00–23:00)<br>Tag 12–13: Seetage<br>Tag 14: Ocean Cay MSC Marine Reserve (07:00–18:00)<br>Tag 15: Miami (Ankunft 07:00)',
+             departurePrices: winterVariablePriceDepartures([['2026-11-21','2026-12-05',1394],['2026-12-05','2026-12-19',1305],['2026-12-19','2027-01-02',2472],['2027-01-02','2027-01-16',1578],['2027-01-16','2027-01-30',1747],['2027-01-30','2027-02-13',1833],['2027-02-13','2027-02-27',1786],['2027-02-27','2027-03-13',1752],['2027-03-13','2027-03-27',1715],['2027-03-27','2027-04-10',1719]])
+         }),
+         createWinterSpecialOffer({
+             id: 28, title: '14 Nächte Karibik ab Miami (Puerto Plata & San Juan)', schiff: 'MSC World America', dauer: '15 Tage · 14 Nächte (Nov 2026 – Apr 2027)', kabine: 'Innenkabine', region: 'Karibik & Antillen', image: 'https://i.postimg.cc/s2pWT9mt/UVD7.png',
+             route: 'Tag 1: Miami (Abfahrt 18:00)<br>Tag 2: Seetag<br>Tag 3: Puerto Plata (09:00–17:00)<br>Tag 4: San Juan (09:00–23:00)<br>Tag 5–6: Seetage<br>Tag 7: Ocean Cay MSC Marine Reserve (08:00–20:00)<br>Tag 8: Miami (07:00–17:00)<br>Tag 9: Seetag<br>Tag 10: Isla de Roatán (09:00–18:00)<br>Tag 11: Costa Maya (08:00–17:00)<br>Tag 12: Cozumel (09:00–19:00)<br>Tag 13: Seetag<br>Tag 14: Ocean Cay MSC Marine Reserve (08:00–20:00)<br>Tag 15: Miami (Ankunft 07:00)',
+             departurePrices: winterVariablePriceDepartures([['2026-11-28','2026-12-12',1448],['2026-12-12','2026-12-26',1489],['2026-12-26','2027-01-09',2328],['2027-01-23','2027-02-06',1737],['2027-02-20','2027-03-06',1854],['2027-03-06','2027-03-20',1565],['2027-03-20','2027-04-03',1775]])
+         }),
+         createWinterSpecialOffer({
+             id: 29, title: '7 Nächte Karibik ab La Romana (Bridgetown & Road Town)', schiff: 'MSC Opera', dauer: '8 Tage · 7 Nächte (Nov 2026 – Feb 2027)', kabine: 'Innenkabine', region: 'Karibik & Antillen', image: 'https://i.postimg.cc/3R8Zpchn/UXIW.png',
+             addons: `${WINTER_SPECIAL_ADDONS}<br>• Flug auf Wunsch dazubuchbar`,
+             route: 'Tag 1: La Romana (Abfahrt 23:30)<br>Tag 2: Catalina Island (Tenderbetrieb 07:00–17:00)<br>Tag 3: Seetag<br>Tag 4: Bridgetown (09:00–19:00)<br>Tag 5: Fort-de-France (08:00–19:00)<br>Tag 6: Pointe-à-Pitre (07:00–16:00)<br>Tag 7: Road Town (07:30–15:30)<br>Tag 8: La Romana (Ankunft 09:00)',
+             departurePrices: winterVariablePriceDepartures([['2026-12-14','2026-12-21',559],['2027-02-08','2027-02-15',629]])
+         }),
+         createWinterSpecialOffer({
+             id: 30, title: '7 Nächte Karibik ab La Romana (Bridgetown & Road Town)', schiff: 'MSC Opera', dauer: '8 Tage · 7 Nächte (Nov–Dez 2026)', kabine: 'Balkonkabine', region: 'Karibik & Antillen', image: 'https://i.postimg.cc/3R8Zpchn/UXIW.png',
+             addons: `${WINTER_SPECIAL_ADDONS}<br>• Flug auf Wunsch dazubuchbar`,
+             route: 'Tag 1: La Romana (Abfahrt 23:30)<br>Tag 2: Catalina Island (Tenderbetrieb 07:00–17:00)<br>Tag 3: Seetag<br>Tag 4: Bridgetown (09:00–19:00)<br>Tag 5: Fort-de-France (08:00–19:00)<br>Tag 6: Pointe-à-Pitre (07:00–16:00)<br>Tag 7: Road Town (07:30–15:30)<br>Tag 8: La Romana (Ankunft 09:00)',
+             departurePrices: winterVariablePriceDepartures([['2026-11-16','2026-11-23',1249],['2026-11-30','2026-12-07',1249],['2026-12-14','2026-12-21',1029],['2027-02-08','2027-02-15',1109]])
+         }),
+         createWinterSpecialOffer({
+             id: 37, title: '7 Nächte Karibik & Antillen ab Miami', schiff: 'MSC World America', dauer: '8 Tage · 7 Nächte (Nov 2026 – Mär 2027)', kabine: 'Meerblickkabine', region: 'Karibik & Antillen', image: 'https://i.postimg.cc/7LdpHQ6Q/World-America-ost.png', route: WORLD_AMERICA_PUERTO_ROUTE,
+             departurePrices: winterVariablePriceDepartures([['2026-11-28','2026-12-05',692],['2026-12-12','2026-12-19',718],['2027-01-09','2027-01-16',894],['2027-01-23','2027-01-30',917],['2027-02-06','2027-02-13',1013],['2027-02-20','2027-02-27',993],['2027-03-06','2027-03-13',891],['2027-03-20','2027-03-27',1041]])
+         }),
+         createWinterSpecialOffer({
+             id: 38, title: '7 Nächte Karibik & Antillen ab Miami', schiff: 'MSC World America', dauer: '8 Tage · 7 Nächte (Nov 2026 – Mär 2027)', kabine: 'Balkonkabine', region: 'Karibik & Antillen', image: 'https://i.postimg.cc/7LdpHQ6Q/World-America-ost.png', route: WORLD_AMERICA_PUERTO_ROUTE,
+             departurePrices: winterVariablePriceDepartures([['2026-11-28','2026-12-05',842],['2026-12-12','2026-12-19',868],['2026-12-26','2027-01-02',1824],['2027-01-09','2027-01-16',1044],['2027-01-23','2027-01-30',1067],['2027-02-06','2027-02-13',1163],['2027-02-20','2027-02-27',1143],['2027-03-06','2027-03-13',1041],['2027-03-20','2027-03-27',1191]])
+         }),
+         createWinterSpecialOffer({
+             id: 39, title: '7 Nächte Karibik ab Miami', schiff: 'MSC World America', dauer: '8 Tage · 7 Nächte (Nov 2026 – Mär 2027)', kabine: 'Meerblickkabine', region: 'Karibik & Antillen', image: 'https://i.postimg.cc/sDdrrY4t/UVD4.jpg', route: WORLD_AMERICA_COZUMEL_ROUTE,
+             departurePrices: winterVariablePriceDepartures([['2026-11-21','2026-11-28',894],['2026-12-05','2026-12-12',675],['2026-12-19','2026-12-26',1028],['2027-01-02','2027-01-09',984],['2027-01-16','2027-01-23',1030],['2027-01-30','2027-02-06',1120],['2027-02-13','2027-02-20',1093],['2027-02-27','2027-03-06',1161],['2027-03-13','2027-03-20',974],['2027-03-27','2027-04-03',1034]])
+         }),
+         createWinterSpecialOffer({
+             id: 40, title: '7 Nächte Karibik ab Miami', schiff: 'MSC World America', dauer: '8 Tage · 7 Nächte (Nov 2026 – Mär 2027)', kabine: 'Balkonkabine', region: 'Karibik & Antillen', image: 'https://i.postimg.cc/sDdrrY4t/UVD4.jpg', route: WORLD_AMERICA_COZUMEL_ROUTE,
+             departurePrices: winterVariablePriceDepartures([['2026-11-21','2026-11-28',1044],['2026-12-05','2026-12-12',825],['2026-12-19','2026-12-26',1178],['2027-01-02','2027-01-09',1134],['2027-01-16','2027-01-23',1180],['2027-01-30','2027-02-06',1270],['2027-02-13','2027-02-20',1243],['2027-02-27','2027-03-06',1311],['2027-03-13','2027-03-20',1124],['2027-03-27','2027-04-03',1184]])
+         }),
+         createWinterSpecialOffer({
+             id: 41, title: '14 Nächte Karibik ab Miami', schiff: 'MSC World America', dauer: '15 Tage · 14 Nächte (Nov 2026 – Apr 2027)', kabine: 'Meerblickkabine', region: 'Karibik & Antillen', image: 'https://i.postimg.cc/s2pWT9mt/UVD7.png', route: WORLD_AMERICA_14_COZUMEL_ROUTE,
+             departurePrices: winterVariablePriceDepartures([['2026-11-21','2026-12-05',1586],['2026-12-05','2026-12-19',1393],['2026-12-19','2027-01-02',2672],['2027-01-02','2027-01-16',1878],['2027-01-30','2027-02-13',2133],['2027-02-13','2027-02-27',2086],['2027-02-27','2027-03-13',2052],['2027-03-13','2027-03-27',2015],['2027-03-27','2027-04-10',2019]])
+         }),
+         createWinterSpecialOffer({
+             id: 42, title: '14 Nächte Karibik ab Miami', schiff: 'MSC World America', dauer: '15 Tage · 14 Nächte (Nov 2026 – Apr 2027)', kabine: 'Balkonkabine', region: 'Karibik & Antillen', image: 'https://i.postimg.cc/s2pWT9mt/UVD7.png', route: WORLD_AMERICA_14_COZUMEL_ROUTE,
+             departurePrices: winterVariablePriceDepartures([['2026-11-21','2026-12-05',1886],['2026-12-05','2026-12-19',1693],['2026-12-19','2027-01-02',2972],['2027-01-02','2027-01-16',2178],['2027-01-16','2027-01-30',2527],['2027-01-30','2027-02-13',2453],['2027-02-13','2027-02-27',2386],['2027-02-27','2027-03-13',2352],['2027-03-13','2027-03-27',2315],['2027-03-27','2027-04-10',2319]])
+         }),
+         createWinterSpecialOffer({
+             id: 43, title: '14 Nächte Karibik ab Miami (Puerto Plata & San Juan)', schiff: 'MSC World America', dauer: '15 Tage · 14 Nächte (Nov 2026 – Apr 2027)', kabine: 'Meerblickkabine', region: 'Karibik & Antillen', image: 'https://i.postimg.cc/s2pWT9mt/UVD7.png', route: WORLD_AMERICA_14_PUERTO_ROUTE,
+             departurePrices: winterVariablePriceDepartures([['2026-11-28','2026-12-12',1507],['2026-12-12','2026-12-26',1746],['2026-12-26','2027-01-09',2628],['2027-01-23','2027-02-06',2037],['2027-02-06','2027-02-20',2106],['2027-02-20','2027-03-06',2154],['2027-03-06','2027-03-20',1865],['2027-03-20','2027-04-03',2075]])
+         }),
+         createWinterSpecialOffer({
+             id: 44, title: '14 Nächte Karibik ab Miami (Puerto Plata & San Juan)', schiff: 'MSC World America', dauer: '15 Tage · 14 Nächte (Nov 2026 – Apr 2027)', kabine: 'Balkonkabine', region: 'Karibik & Antillen', image: 'https://i.postimg.cc/s2pWT9mt/UVD7.png', route: WORLD_AMERICA_14_PUERTO_ROUTE,
+             departurePrices: winterVariablePriceDepartures([['2026-11-28','2026-12-12',1667],['2026-12-12','2026-12-26',2046],['2026-12-26','2027-01-09',2928],['2027-01-23','2027-02-06',2377],['2027-02-06','2027-02-20',2406],['2027-02-20','2027-03-06',2454],['2027-03-06','2027-03-20',2165],['2027-03-20','2027-04-03',2375]])
+         }),
+         createWinterSpecialOffer({
+             id: 45, title: '7 Nächte Karibik ab La Romana (Bridgetown & Road Town)', schiff: 'MSC Opera', dauer: '8 Tage · 7 Nächte (Nov 2026 – Feb 2027)', kabine: 'Meerblickkabine', region: 'Karibik & Antillen', image: 'https://i.postimg.cc/3R8Zpchn/UXIW.png', addons: `${WINTER_SPECIAL_ADDONS}<br>• Flug auf Wunsch dazubuchbar`, route: MSC_OPERA_ROUTE,
+             departurePrices: winterVariablePriceDepartures([['2026-11-16','2026-11-23',859],['2026-12-14','2026-12-21',669],['2027-02-08','2027-02-15',729]])
+         }),
+         createWinterSpecialOffer({
+             id: 31, title: '7 Nächte Mittelmeer ab Genua', schiff: 'MSC World Asia', dauer: '8 Tage · 7 Nächte (Dez 2026 – Mär 2027)', kabine: 'Innenkabine', region: 'Mittelmeer', image: 'https://i.postimg.cc/FR9NSspm/Mittelmeer-ASIA.jpg', route: WORLD_ASIA_GENOA_ROUTE,
+             departurePrices: winterVariablePriceDepartures([
+                 ['2026-12-06','2026-12-13',859],['2026-12-13','2026-12-20',739],['2026-12-20','2026-12-27',1059],['2026-12-27','2027-01-03',1529],['2027-01-03','2027-01-10',969],['2027-01-10','2027-01-17',789],['2027-01-17','2027-01-24',729],['2027-01-24','2027-01-31',689],['2027-01-31','2027-02-07',699],['2027-02-07','2027-02-14',749],['2027-02-14','2027-02-21',779],['2027-02-21','2027-02-28',729],['2027-02-28','2027-03-07',709],['2027-03-07','2027-03-14',789],['2027-03-14','2027-03-21',809],['2027-03-21','2027-03-28',839],['2027-03-28','2027-04-04',1019]
+             ])
+         }),
+         createWinterSpecialOffer({
+             id: 32, title: '7 Nächte Mittelmeer ab Genua', schiff: 'MSC World Asia', dauer: '8 Tage · 7 Nächte (Dez 2026 – Mär 2027)', kabine: 'Meerblickkabine', region: 'Mittelmeer', image: 'https://i.postimg.cc/FR9NSspm/Mittelmeer-ASIA.jpg', route: WORLD_ASIA_GENOA_ROUTE,
+             departurePrices: winterVariablePriceDepartures([
+                 ['2026-12-06','2026-12-13',949],['2026-12-13','2026-12-20',909],['2026-12-20','2026-12-27',1219],['2027-01-10','2027-01-17',899],['2027-01-17','2027-01-24',789],['2027-01-24','2027-01-31',829],['2027-01-31','2027-02-07',779],['2027-02-07','2027-02-14',949],['2027-02-14','2027-02-21',869],['2027-02-21','2027-02-28',869],['2027-02-28','2027-03-07',799],['2027-03-07','2027-03-14',959],['2027-03-14','2027-03-21',1039],['2027-03-21','2027-03-28',1199],['2027-03-28','2027-04-04',1239]
+             ])
+         }),
+         createWinterSpecialOffer({
+             id: 33, title: '7 Nächte Mittelmeer ab Genua', schiff: 'MSC World Asia', dauer: '8 Tage · 7 Nächte (Dez 2026 – Mär 2027)', kabine: 'Balkonkabine', region: 'Mittelmeer', image: 'https://i.postimg.cc/FR9NSspm/Mittelmeer-ASIA.jpg', route: WORLD_ASIA_GENOA_ROUTE,
+             departurePrices: winterVariablePriceDepartures([
+                 ['2026-12-06','2026-12-13',1149],['2026-12-13','2026-12-20',1179],['2026-12-20','2026-12-27',1279],['2026-12-27','2027-01-03',1889],['2027-01-03','2027-01-10',1319],['2027-01-10','2027-01-17',1029],['2027-01-17','2027-01-24',919],['2027-01-24','2027-01-31',919],['2027-01-31','2027-02-07',909],['2027-02-07','2027-02-14',1049],['2027-02-14','2027-02-21',959],['2027-02-21','2027-02-28',959],['2027-02-28','2027-03-07',889],['2027-03-07','2027-03-14',1049],['2027-03-14','2027-03-21',1099],['2027-03-21','2027-03-28',1409],['2027-03-28','2027-04-04',1389]
+             ])
+         }),
+         createWinterSpecialOffer({
+             id: 34, title: '7 Nächte Mittelmeer ab Barcelona', schiff: 'MSC World Asia', dauer: '8 Tage · 7 Nächte (Dez 2026 – Mär 2027)', kabine: 'Innenkabine', region: 'Mittelmeer', image: 'https://i.postimg.cc/FR9NSspm/Mittelmeer-ASIA.jpg', route: WORLD_ASIA_BARCELONA_ROUTE,
+             departurePrices: winterVariablePriceDepartures([
+                 ['2026-12-04','2026-12-11',989],['2026-12-11','2026-12-18',789],['2026-12-18','2026-12-25',819],['2026-12-25','2027-01-01',1449],['2027-01-01','2027-01-08',969],['2027-01-08','2027-01-15',699],['2027-01-15','2027-01-22',769],['2027-01-22','2027-01-29',769],['2027-01-29','2027-02-05',689],['2027-02-05','2027-02-12',799],['2027-02-12','2027-02-19',749],['2027-02-19','2027-02-26',859],['2027-02-26','2027-03-05',739],['2027-03-05','2027-03-12',849],['2027-03-12','2027-03-19',799],['2027-03-19','2027-03-26',1069],['2027-03-26','2027-04-02',1119]
+             ])
+         }),
+         createWinterSpecialOffer({
+             id: 35, title: '7 Nächte Mittelmeer ab Barcelona', schiff: 'MSC World Asia', dauer: '8 Tage · 7 Nächte (Dez 2026 – Mär 2027)', kabine: 'Meerblickkabine', region: 'Mittelmeer', image: 'https://i.postimg.cc/FR9NSspm/Mittelmeer-ASIA.jpg', route: WORLD_ASIA_BARCELONA_ROUTE,
+             departurePrices: winterVariablePriceDepartures([
+                 ['2026-12-04','2026-12-11',1019],['2026-12-11','2026-12-18',909],['2026-12-18','2026-12-25',1029],['2026-12-25','2027-01-01',1639],['2027-01-01','2027-01-08',1139],['2027-01-08','2027-01-15',849],['2027-01-15','2027-01-22',919],['2027-01-22','2027-01-29',859],['2027-01-29','2027-02-05',839],['2027-02-05','2027-02-12',1109],['2027-02-12','2027-02-19',949],['2027-02-19','2027-02-26',1009],['2027-02-26','2027-03-05',889],['2027-03-05','2027-03-12',1049],['2027-03-12','2027-03-19',959],['2027-03-19','2027-03-26',1279],['2027-03-26','2027-04-02',1459]
+             ])
+         }),
+         createWinterSpecialOffer({
+             id: 36, title: '7 Nächte Mittelmeer ab Barcelona', schiff: 'MSC World Asia', dauer: '8 Tage · 7 Nächte (Dez 2026 – Mär 2027)', kabine: 'Balkonkabine', region: 'Mittelmeer', image: 'https://i.postimg.cc/FR9NSspm/Mittelmeer-ASIA.jpg', route: WORLD_ASIA_BARCELONA_ROUTE,
+             departurePrices: winterVariablePriceDepartures([
+                 ['2026-12-04','2026-12-11',1109],['2026-12-11','2026-12-18',1019],['2026-12-18','2026-12-25',1159],['2026-12-25','2027-01-01',1769],['2027-01-01','2027-01-08',1119],['2027-01-08','2027-01-15',939],['2027-01-15','2027-01-22',1049],['2027-01-22','2027-01-29',989],['2027-01-29','2027-02-05',969],['2027-02-05','2027-02-12',1239],['2027-02-12','2027-02-19',1079],['2027-02-19','2027-02-26',1139],['2027-02-26','2027-03-05',1019],['2027-03-05','2027-03-12',1119],['2027-03-12','2027-03-19',1089],['2027-03-19','2027-03-26',1369],['2027-03-26','2027-04-02',1609]
+             ])
+         })
+     ];
+
      let selectedLines = [];
      let selectedPrices = [];
      let selectedRegions = [];
@@ -683,6 +842,8 @@
      const FAVORITES_STORAGE_KEY = 'corecruises-offer-favorites';
      let showingFavorites = false;
      let favoriteOfferIds = new Set();
+     // Eine Auswahl gilt nur für die aktuelle Seite/Sitzung und wird nicht gespeichert.
+     const selectedDepartures = new Map();
 
      try {
          const storedFavorites = JSON.parse(localStorage.getItem(FAVORITES_STORAGE_KEY) || '[]');
@@ -1195,6 +1356,8 @@
          }
      ];
 
+     offersData.push(...winterSpecialOffers);
+
      // Der erste Routenstopp ist zugleich der Abfahrtshafen.
      function extractDeparturePort(route = '') {
          const firstLeg = route.split(/<br\s*\/?>/i)[0] ?? '';
@@ -1556,6 +1719,77 @@
          renderRoutes();
      }
 
+     function getSelectedDeparture(id) {
+         const offer = offersData.find(item => item.id === id);
+         const selectedStart = selectedDepartures.get(id);
+         return offer?.departurePrices?.find(departure => departure.start === selectedStart) ?? null;
+     }
+
+     function renderDeparturePrices(offer) {
+         if (!Array.isArray(offer.departurePrices) || offer.departurePrices.length === 0) return '';
+
+         const bestPrice = Math.min(...offer.departurePrices.map(departure => departure.price));
+         const selectedDeparture = getSelectedDeparture(offer.id);
+         const selectionNote = selectedDeparture
+             ? `Ausgewählt: <strong>${selectedDeparture.label}</strong> · ${winterEuro(selectedDeparture.price)} p.P.*. Deine Anfrage bezieht sich auf diese Abfahrt.`
+             : 'Bitte wähle eine Abfahrt aus, damit deine Anfrage den konkreten Reisetermin enthält.';
+
+         return `
+             <section class="departure-prices" aria-label="Abfahrten und Preise">
+                 <h4>Abfahrten &amp; Preise</h4>
+                 <p>Preis pro Person bei der jeweiligen Abfahrt. Wähle deinen gewünschten Termin aus.</p>
+                 <div class="departure-price-list">
+                     ${offer.departurePrices.map(departure => {
+                         const isBest = departure.price === bestPrice;
+                         const isSelected = selectedDeparture?.start === departure.start;
+                         return `
+                             <button class="departure-price-item${isBest ? ' is-best' : ''}${isSelected ? ' is-selected' : ''}" type="button" onclick="selectDeparture(${offer.id}, '${departure.start}')" aria-pressed="${isSelected}">
+                                 <span class="departure-price-dates">
+                                     <time datetime="${departure.start}">${departure.label}</time>
+                                     ${isBest ? '<span class="departure-price-badge">Bester Preis</span>' : ''}
+                                 </span>
+                                 <strong>${winterEuro(departure.price)} p.P.*</strong>
+                             </button>`;
+                     }).join('')}
+                 </div>
+                 <p class="departure-selection-note${selectedDeparture ? '' : ' is-required'}" id="departure_note_${offer.id}" role="status">${selectionNote}</p>
+             </section>`;
+     }
+
+     function selectDeparture(id, start) {
+         const offer = offersData.find(item => item.id === id);
+         const departure = offer?.departurePrices?.find(item => item.start === start);
+         if (!offer || !departure) return;
+
+         selectedDepartures.set(id, start);
+         renderRoutes();
+
+         const details = document.getElementById(`details_${id}`);
+         const detailButton = document.getElementById(`btn_det_${id}`);
+         if (details && detailButton) {
+             details.classList.add('open');
+             detailButton.innerHTML = 'Details ausblenden <i class="fa-solid fa-chevron-up"></i>';
+         }
+         toggleContact(id);
+         document.getElementById(`actions_exp_${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+     }
+
+     function requireDepartureSelection(id) {
+         const details = document.getElementById(`details_${id}`);
+         const detailButton = document.getElementById(`btn_det_${id}`);
+         if (details && detailButton && !details.classList.contains('open')) {
+             details.classList.add('open');
+             detailButton.innerHTML = 'Details ausblenden <i class="fa-solid fa-chevron-up"></i>';
+         }
+
+         const note = document.getElementById(`departure_note_${id}`);
+         if (note) {
+             note.classList.add('is-required');
+             note.textContent = 'Bitte wähle zuerst eine verfügbare Abfahrt aus. Danach wird der Termin automatisch in deine Anfrage übernommen.';
+         }
+         document.getElementById(`details_${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+     }
+
      function renderRoutes() {
          // Nicht mehr vorhandene oder abgelaufene Angebote bleiben nicht als Favorit zurück.
          pruneFavoriteOffers();
@@ -1597,6 +1831,7 @@
          sortOffers(filtered).forEach(offer => {
              const card = document.createElement('article');
              card.className = 'route-card';
+             const selectedDeparture = getSelectedDeparture(offer.id);
 
              card.innerHTML = `
                  <div class="card-header">
@@ -1633,7 +1868,7 @@
                  <div class="actions">
                      <div class="collapsed" id="actions_col_${offer.id}">
                          <button class="btn btn-contact" onclick="toggleContact(${offer.id})">
-                             <i class="fa-solid fa-paper-plane"></i> Angebot anfragen
+                             <i class="fa-solid fa-paper-plane"></i> ${offer.departurePrices ? (selectedDeparture ? 'Ausgewählte Abfahrt anfragen' : 'Abfahrt auswählen &amp; anfragen') : 'Angebot anfragen'}
                          </button>
                      </div>
                      <div class="expanded" id="actions_exp_${offer.id}">
@@ -1648,7 +1883,7 @@
                          </button>
                      </div>
                      <button class="btn btn-toggle" onclick="toggleDetails(${offer.id})" id="btn_det_${offer.id}">
-                         Details & Routenverlauf <i class="fa-solid fa-chevron-down"></i>
+                         ${offer.departurePrices ? 'Abfahrten, Details &amp; Route' : 'Details &amp; Routenverlauf'} <i class="fa-solid fa-chevron-down"></i>
                      </button>
                      <button class="btn btn-share" type="button" onclick="shareOffer(${offer.id})" aria-expanded="false" aria-controls="share_${offer.id}" id="btn_share_${offer.id}">
                          <i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Teilen
@@ -1664,6 +1899,7 @@
                  </div>
 
                  <div class="details-expanded" id="details_${offer.id}">
+                     ${renderDeparturePrices(offer)}
                      <p><strong>Routenverlauf:</strong><br>${offer.route}</p>
                      <div class="legal-text">${offer.legal}</div>
                  </div>
@@ -1680,6 +1916,11 @@
      }
 
      function toggleContact(id) {
+         const offer = offersData.find(item => item.id === id);
+         if (offer?.departurePrices?.length && !getSelectedDeparture(id)) {
+             requireDepartureSelection(id);
+             return;
+         }
          const col = document.getElementById(`actions_col_${id}`);
          const exp = document.getElementById(`actions_exp_${id}`);
          if (exp.style.display === 'flex') {
@@ -1694,9 +1935,11 @@
      function toggleDetails(id) {
          const det = document.getElementById(`details_${id}`);
          const btn = document.getElementById(`btn_det_${id}`);
+         const offer = offersData.find(item => item.id === id);
+         const buttonLabel = offer?.departurePrices ? 'Abfahrten, Details &amp; Route' : 'Details &amp; Routenverlauf';
          if (det.classList.contains('open')) {
              det.classList.remove('open');
-             btn.innerHTML = 'Details & Routenverlauf <i class="fa-solid fa-chevron-down"></i>';
+             btn.innerHTML = `${buttonLabel} <i class="fa-solid fa-chevron-down"></i>`;
          } else {
              det.classList.add('open');
              btn.innerHTML = 'Details ausblenden <i class="fa-solid fa-chevron-up"></i>';
@@ -1791,12 +2034,19 @@
 
      function sendWhatsApp(id) {
          const offer = offersData.find(o => o.id === id);
+         const selectedDeparture = getSelectedDeparture(id);
+         if (offer?.departurePrices?.length && !selectedDeparture) {
+             requireDepartureSelection(id);
+             return;
+         }
+         const departureLine = selectedDeparture ? `Abfahrt: ${selectedDeparture.label}\n` : '';
+         const displayedPrice = selectedDeparture ? `${winterEuro(selectedDeparture.price)} p.P.*` : offer.preisDisplay;
 
          const message = `Hallo! Ich habe Interesse an folgendem Angebot:
 *${offer.title}*
 Reederei: ${offer.reederei}
 Schiff: ${offer.schiff}
-Preis: ${offer.preisDisplay}
+${departureLine}Preis: ${displayedPrice}
 Kabine: ${offer.kabine}
 
 Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
@@ -1807,9 +2057,15 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
 
      function sendEmail(id) {
          const offer = offersData.find(o => o.id === id);
+         const selectedDeparture = getSelectedDeparture(id);
+         if (offer?.departurePrices?.length && !selectedDeparture) {
+             requireDepartureSelection(id);
+             return;
+         }
+         const departureLine = selectedDeparture ? `\n- Abfahrt: ${selectedDeparture.label}\n- Preis: ${winterEuro(selectedDeparture.price)} p.P.*` : `\n- Preis: ${offer.preisDisplay}`;
 
-         const subject = `Anfrage zum Angebot: ${offer.title}`;
-         const body = `Hallo Team von corecruises.de,\n\nich habe Interesse an folgendem Angebot auf angebote.corecruises.de:\n- Angebot: ${offer.title}\n- Reederei: ${offer.reederei}\n- Schiff: ${offer.schiff}\n- Kabine: ${offer.kabine}\n- Preis: ${offer.preisDisplay}\n\nBitte senden Sie mir ein unverbindliches Angebot zu.\n\nViele Grüße`;
+         const subject = `Anfrage: ${offer.title}${selectedDeparture ? ` – ${selectedDeparture.label}` : ''}`;
+         const body = `Hallo Team von corecruises.de,\n\nich habe Interesse an folgendem Angebot auf angebote.corecruises.de:\n- Angebot: ${offer.title}\n- Reederei: ${offer.reederei}\n- Schiff: ${offer.schiff}\n- Kabine: ${offer.kabine}${departureLine}\n\nBitte senden Sie mir ein unverbindliches Angebot zu.\n\nViele Grüße`;
 
          const mailtoLink = `mailto:${MY_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
          window.open(mailtoLink, '_self');
