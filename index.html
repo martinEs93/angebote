@@ -362,6 +362,40 @@
      .consultation-chat__toggle:hover { transform:translateY(-2px) scale(1.04); box-shadow:0 9px 22px rgba(0,31,63,.38); }
      .consultation-chat.is-open .consultation-chat__toggle { display:none; }
      @media (max-width:768px) { .consultation-chat { right:15px; bottom:15px; } }
+
+     /* Intelligenter Beratungs-Concierge */
+     .consultation-chat__panel { padding:0; overflow:hidden; }
+     .smart-chat__header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:15px 18px 12px; color:#fff; background:linear-gradient(135deg, #003366, #0A1A2F); }
+     .smart-chat__identity { display:flex; align-items:center; gap:9px; min-width:0; }
+     .smart-chat__identity strong { display:block; font-size:14px; }
+     .smart-chat__identity span { display:block; margin-top:1px; opacity:.78; font-size:11px; }
+     .smart-chat__logo { background:#fff; }
+     .smart-chat__close { display:grid; place-items:center; flex:0 0 auto; width:30px; height:30px; padding:0; border:0; border-radius:50%; color:#fff; background:rgba(255,255,255,.13); cursor:pointer; font-size:17px; }
+     .smart-chat__close:hover { background:rgba(255,255,255,.24); }
+     .smart-chat__messages { display:flex; flex-direction:column; gap:9px; max-height:286px; min-height:155px; padding:15px 16px 8px; overflow-y:auto; background:#f8fafc; scroll-behavior:smooth; }
+     .smart-chat__message { display:flex; gap:8px; align-items:flex-end; max-width:100%; }
+     .smart-chat__message--user { justify-content:flex-end; }
+     .smart-chat__avatar { flex:0 0 auto; width:29px; height:29px; border-radius:50%; object-fit:cover; background:#e8f0f7; }
+     .smart-chat__bubble { max-width:calc(100% - 38px); margin:0; padding:10px 12px; border-radius:5px 13px 13px; color:#173b60; background:#eaf3fb; font-size:14px; font-weight:600; line-height:1.42; white-space:pre-line; }
+     .smart-chat__message--user .smart-chat__bubble { border-radius:13px 5px 13px 13px; color:#fff; background:#003366; }
+     .smart-chat__suggestion { padding:8px 16px 13px; background:#f8fafc; }
+     .smart-chat__suggestion-label { display:block; margin:0 0 7px; color:#64748b; font-size:11px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; }
+     .smart-chat__actions { display:flex; flex-wrap:wrap; gap:7px; }
+     .smart-chat__action { flex:1 1 calc(50% - 4px); min-width:130px; padding:9px 10px; border:1px solid #c8d9e8; border-radius:8px; color:#003366; background:#fff; cursor:pointer; font:inherit; font-size:12px; font-weight:700; line-height:1.25; transition:background .18s, color .18s, transform .18s; }
+     .smart-chat__action:hover { color:#fff; background:#003366; border-color:#003366; transform:translateY(-1px); }
+     .smart-chat__form { display:flex; gap:7px; padding:0 16px 12px; background:#f8fafc; }
+     .smart-chat__form[hidden] { display:none; }
+     .smart-chat__input { flex:1; min-width:0; padding:10px 11px; border:1px solid #c8d9e8; border-radius:8px; color:#173b60; background:#fff; font:inherit; font-size:13px; }
+     .smart-chat__submit { display:grid; place-items:center; width:42px; padding:0; border:0; border-radius:8px; color:#fff; background:#003366; cursor:pointer; }
+     .smart-chat__submit:hover { background:#002244; }
+     .smart-chat__note { margin:0; padding:0 16px 11px; color:#718096; background:#f8fafc; font-size:10px; line-height:1.35; }
+     .smart-chat__contact { display:grid; grid-template-columns:1fr 1fr; gap:7px; padding:11px 16px; border-top:1px solid #e2e8f0; background:#fff; }
+     .smart-chat__contact-link { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:38px; border-radius:8px; color:#fff; text-decoration:none; font-size:12px; font-weight:700; }
+     .smart-chat__contact-link--whatsapp { background:#25D366; }
+     .smart-chat__contact-link--mail { background:#4a5568; }
+     .smart-chat__utility { display:flex; justify-content:center; padding:0 16px 12px; background:#fff; }
+     .smart-chat__restart { padding:0; border:0; color:#587087; background:transparent; cursor:pointer; font:inherit; font-size:11px; text-decoration:underline; }
+     @media (max-width:768px) { .smart-chat__messages { max-height:250px; } }
  </style>
 </head>
 <body>
@@ -592,27 +626,30 @@
  <!-- Persönliche Beratung -->
  <aside class="consultation-chat" id="consultationChat" aria-label="Persönliche Beratung">
      <div class="consultation-chat__panel" role="dialog" aria-modal="false" aria-labelledby="consultationChatTitle">
-         <div class="consultation-chat__header">
-             <div class="consultation-chat__brand" id="consultationChatTitle">
+         <div class="smart-chat__header">
+             <div class="smart-chat__identity" id="consultationChatTitle">
                  <img class="consultation-chat__logo" src="favicon.png" alt="">
-                 Core Cruises
+                 <div><strong>Core Cruises</strong><span>Dein persönlicher Reiseberater</span></div>
              </div>
-             <button class="consultation-chat__close" id="consultationChatClose" type="button" aria-label="Beratungsfenster schließen">
+             <button class="smart-chat__close" id="consultationChatClose" type="button" aria-label="Beratungsfenster schließen">
                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
              </button>
          </div>
-         <div class="consultation-chat__message-row">
-             <img class="consultation-chat__message-avatar" src="favicon.png" alt="Core Cruises">
-             <p class="consultation-chat__message" id="consultationChatMessage">Brauchst du Unterstützung bei der Wahl eines Angebots?</p>
+         <div class="smart-chat__messages" id="smartChatMessages" aria-live="polite" aria-label="Beratungschat"></div>
+         <div class="smart-chat__suggestion" id="smartChatSuggestion">
+             <span class="smart-chat__suggestion-label">Wähle, wobei ich helfen darf</span>
+             <div class="smart-chat__actions" id="smartChatActions"></div>
          </div>
-         <div class="consultation-chat__actions">
-             <a class="consultation-chat__action consultation-chat__action--whatsapp" id="consultationChatWhatsApp" href="#" target="_blank" rel="noopener">
-                 <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp
-             </a>
-             <a class="consultation-chat__action consultation-chat__action--mail" id="consultationChatMail" href="#">
-                 <i class="fa-regular fa-envelope" aria-hidden="true"></i> E-Mail
-             </a>
+         <form class="smart-chat__form" id="smartChatForm" hidden>
+             <input class="smart-chat__input" id="smartChatInput" type="text" maxlength="280" autocomplete="off">
+             <button class="smart-chat__submit" type="submit" aria-label="Antwort senden"><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></button>
+         </form>
+         <p class="smart-chat__note">Deine Eingabe wird nicht gespeichert. Erst beim Kontakt per WhatsApp oder E-Mail wird sie an uns übermittelt.</p>
+         <div class="smart-chat__contact">
+             <a class="smart-chat__contact-link smart-chat__contact-link--whatsapp" id="consultationChatWhatsApp" href="#" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+             <a class="smart-chat__contact-link smart-chat__contact-link--mail" id="consultationChatMail" href="#"><i class="fa-regular fa-envelope" aria-hidden="true"></i> E-Mail</a>
          </div>
+         <div class="smart-chat__utility"><button class="smart-chat__restart" id="smartChatRestart" type="button">Beratung neu starten</button></div>
      </div>
      <button class="consultation-chat__toggle" id="consultationChatToggle" type="button" aria-label="Persönliche Beratung öffnen" aria-expanded="false">
          <i class="fa-regular fa-comment-dots" aria-hidden="true"></i>
@@ -1775,44 +1812,235 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
          window.open(mailtoLink, '_self');
      }
 
-     // Beratungs-Chat: führt Interessierte direkt in die persönliche Beratung.
-     (function initConsultationChat() {
+     // Dialoggesteuerter Beratungs-Concierge für persönliche, manuelle Angebote.
+     (function initSmartConsultationChat() {
          const chat = document.getElementById('consultationChat');
          const toggle = document.getElementById('consultationChatToggle');
          const close = document.getElementById('consultationChatClose');
+         const messages = document.getElementById('smartChatMessages');
+         const actions = document.getElementById('smartChatActions');
+         const suggestion = document.getElementById('smartChatSuggestion');
+         const suggestionLabel = suggestion?.querySelector('.smart-chat__suggestion-label');
+         const form = document.getElementById('smartChatForm');
+         const input = document.getElementById('smartChatInput');
+         const restart = document.getElementById('smartChatRestart');
          const whatsapp = document.getElementById('consultationChatWhatsApp');
          const mail = document.getElementById('consultationChatMail');
-         const messageElement = document.getElementById('consultationChatMessage');
-         if (!chat || !toggle || !close || !whatsapp || !mail || !messageElement) return;
+         if (!chat || !toggle || !close || !messages || !actions || !suggestion || !suggestionLabel || !form || !input || !restart || !whatsapp || !mail) return;
 
-         function updateChatContent() {
-             const expiringFavorite = getFavoriteExpiringToday();
-             const chatText = expiringFavorite
-                 ? `Dein Favorit „${expiringFavorite.title}“ ist nur noch heute gültig. Soll ich die Verfügbarkeit für dich prüfen?`
-                 : 'Brauchst du Unterstützung bei der Wahl eines Angebots?';
-             const contactMessage = expiringFavorite
-                 ? `Hallo Core Cruises, bitte prüft die Verfügbarkeit für mein favorisiertes Angebot „${expiringFavorite.title}“.`
-                 : 'Hallo Core Cruises, ich brauche Unterstützung bei der Wahl eines Kreuzfahrtangebots.';
-             const subject = expiringFavorite
-                 ? `Verfügbarkeitsprüfung: ${expiringFavorite.title}`
-                 : 'Beratung zu einem Kreuzfahrtangebot';
-
-             messageElement.textContent = chatText;
-             whatsapp.href = `https://wa.me/${MY_PHONE_NUMBER}?text=${encodeURIComponent(contactMessage)}`;
-             mail.href = `mailto:${MY_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(contactMessage)}`;
-         }
+         let submitTextAnswer = null;
+         let advisorState = {};
 
          function setOpen(isOpen) {
              chat.classList.toggle('is-open', isOpen);
              toggle.setAttribute('aria-expanded', String(isOpen));
          }
 
+         function addMessage(text, fromUser = false) {
+             const row = document.createElement('div');
+             row.className = `smart-chat__message${fromUser ? ' smart-chat__message--user' : ''}`;
+             if (!fromUser) {
+                 const avatar = document.createElement('img');
+                 avatar.className = 'smart-chat__avatar';
+                 avatar.src = 'favicon.png';
+                 avatar.alt = 'Core Cruises';
+                 row.appendChild(avatar);
+             }
+             const bubble = document.createElement('p');
+             bubble.className = 'smart-chat__bubble';
+             bubble.textContent = text;
+             row.appendChild(bubble);
+             messages.appendChild(row);
+             messages.scrollTop = messages.scrollHeight;
+         }
+
+         function setActions(label, choices = []) {
+             suggestionLabel.textContent = label;
+             actions.replaceChildren();
+             choices.forEach(choice => {
+                 const button = document.createElement('button');
+                 button.type = 'button';
+                 button.className = 'smart-chat__action';
+                 button.textContent = choice.label;
+                 button.addEventListener('click', () => {
+                     addMessage(choice.label, true);
+                     choice.run();
+                 });
+                 actions.appendChild(button);
+             });
+             suggestion.hidden = choices.length === 0;
+             form.hidden = true;
+             submitTextAnswer = null;
+         }
+
+         function askForText(question, placeholder, onAnswer) {
+             addMessage(question);
+             suggestion.hidden = true;
+             form.hidden = false;
+             input.value = '';
+             input.placeholder = placeholder;
+             input.focus();
+             submitTextAnswer = onAnswer;
+         }
+
+         function getActiveFavoriteOffers() {
+             return getActiveOffers().filter(offer => favoriteOfferIds.has(offer.id));
+         }
+
+         function getFilterSummary() {
+             const parts = [];
+             if (selectedLines.length) parts.push(`Reederei: ${selectedLines.join(', ')}`);
+             if (selectedRegions.length) parts.push(`Region: ${selectedRegions.join(', ')}`);
+             if (selectedActions.length) parts.push(`Aktion: ${selectedActions.join(', ')}`);
+             if (selectedPrices.length) {
+                 const labels = selectedPrices.map(value => priceRangesList.find(range => range.value === value)?.label || value);
+                 parts.push(`Budget: ${labels.join(', ')}`);
+             }
+             return parts;
+         }
+
+         function buildContactMessage() {
+             const parts = ['Hallo Core Cruises, ich wünsche eine persönliche Beratung zu einem Kreuzfahrtangebot.'];
+             if (advisorState.goal) parts.push(`Anliegen: ${advisorState.goal}.`);
+             if (advisorState.priority) parts.push(`Besonders wichtig: ${advisorState.priority}.`);
+             if (advisorState.focusOffer) parts.push(`Favorisiertes Angebot: ${advisorState.focusOffer.title} (${advisorState.focusOffer.preisDisplay}).`);
+             if (advisorState.favoriteTitles?.length) parts.push(`Gespeicherte Favoriten: ${advisorState.favoriteTitles.join(', ')}.`);
+             const filters = getFilterSummary();
+             if (filters.length) parts.push(`Aktuelle Auswahl: ${filters.join('; ')}.`);
+             if (advisorState.details) parts.push(`Weitere Wünsche: ${advisorState.details}`);
+             return parts.join('\n');
+         }
+
+         function refreshContactLinks() {
+             const message = buildContactMessage();
+             const subject = advisorState.focusOffer
+                 ? `Verfügbarkeitsprüfung: ${advisorState.focusOffer.title}`
+                 : 'Persönliche Beratung zu Kreuzfahrtangeboten';
+             whatsapp.href = `https://wa.me/${MY_PHONE_NUMBER}?text=${encodeURIComponent(message)}`;
+             mail.href = `mailto:${MY_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+         }
+
+         function finishWithContact(nextStep) {
+             refreshContactLinks();
+             addMessage(`${nextStep}\n\nIch habe die Angaben für deine Anfrage vorbereitet. Wähle jetzt einfach WhatsApp oder E-Mail – unser Team prüft die Verfügbarkeit persönlich.`);
+             setActions('Wie möchtest du uns erreichen?', [
+                 { label: 'Beratung neu starten', run: startConversation }
+             ]);
+         }
+
+         function askForWishDetails() {
+             askForText(
+                 'Magst du mir noch Reisezeit, Personenzahl, Abfahrtshafen oder einen besonderen Wunsch nennen? Du kannst auch „ohne weitere Wünsche“ schreiben.',
+                 'z. B. Mai 2027, 2 Personen, ab Hamburg',
+                 answer => {
+                     advisorState.details = answer || 'Keine weiteren Angaben';
+                     addMessage(advisorState.details, true);
+                     finishWithContact('Sehr gut – damit können wir gezielter für dich suchen.');
+                 }
+             );
+         }
+
+         function startOfferFinder() {
+             advisorState.goal = 'Ich möchte ein passendes Angebot finden';
+             addMessage('Worauf soll ich bei deiner Auswahl zuerst achten?');
+             setActions('Deine Priorität', [
+                 { label: 'Bester Preis', run: () => { advisorState.priority = 'ein besonders gutes Preis-Leistungs-Verhältnis'; askForWishDetails(); } },
+                 { label: 'Passende Route', run: () => { advisorState.priority = 'eine passende Route'; askForWishDetails(); } },
+                 { label: 'Reisezeit', run: () => { advisorState.priority = 'der passende Reisezeitraum'; askForWishDetails(); } },
+                 { label: 'Ich bin noch offen', run: () => { advisorState.priority = 'Inspiration und eine persönliche Empfehlung'; askForWishDetails(); } }
+             ]);
+         }
+
+         function checkFavorites() {
+             const favorites = getActiveFavoriteOffers();
+             advisorState.goal = 'Ich möchte meine gespeicherten Favoriten prüfen';
+             advisorState.favoriteTitles = favorites.map(offer => offer.title);
+             const expiringFavorite = getFavoriteExpiringToday();
+             if (!favorites.length) {
+                 addMessage('Du hast aktuell noch keine gespeicherten Favoriten. Ich helfe dir gern, Angebote nach deinen Wünschen einzugrenzen.');
+                 setActions('Wie möchtest du weitergehen?', [
+                     { label: 'Angebot finden', run: startOfferFinder },
+                     { label: 'Aktuelle Auswahl beraten', run: adviseCurrentSelection }
+                 ]);
+                 return;
+             }
+             const names = favorites.slice(0, 2).map(offer => `„${offer.title}“`).join(' und ');
+             const more = favorites.length > 2 ? ` sowie ${favorites.length - 2} weitere` : '';
+             addMessage(`Du hast ${favorites.length} Favorit${favorites.length === 1 ? '' : 'en'} gespeichert: ${names}${more}.`);
+             if (expiringFavorite) addMessage(`Wichtig: „${expiringFavorite.title}“ ist nur noch heute gültig.`);
+             setActions('Was soll ich für dich vorbereiten?', [
+                 { label: 'Favoriten vergleichen', run: () => finishWithContact('Wir vergleichen deine Favoriten gern hinsichtlich Route, Kabine, Preis und Verfügbarkeit.') },
+                 { label: 'Verfügbarkeit prüfen', run: () => { advisorState.focusOffer = expiringFavorite || favorites[0]; finishWithContact(`Wir prüfen gern die aktuelle Verfügbarkeit für „${advisorState.focusOffer.title}“.`); } },
+                 { label: 'Andere Angebote suchen', run: startOfferFinder }
+             ]);
+         }
+
+         function adviseCurrentSelection() {
+             advisorState.goal = 'Ich möchte die aktuelle Angebotsauswahl beraten lassen';
+             const filters = getFilterSummary();
+             if (filters.length) {
+                 addMessage(`Ich sehe deine aktuelle Auswahl: ${filters.join(' · ')}.`);
+                 askForWishDetails();
+             } else {
+                 addMessage('Du hast noch keine Filter gesetzt. Kein Problem – ich helfe dir, die passende Auswahl zu finden.');
+                 startOfferFinder();
+             }
+         }
+
+         function requestCallback() {
+             advisorState.goal = 'Ich wünsche einen Rückruf';
+             askForText(
+                 'Wann passt dir ein Rückruf am besten? Nenne gern Tag, Uhrzeit und eine Telefonnummer.',
+                 'z. B. morgen ab 16 Uhr, 0170 …',
+                 answer => {
+                     advisorState.details = answer || 'Bitte Rückrufmöglichkeiten abstimmen';
+                     addMessage(advisorState.details, true);
+                     finishWithContact('Sehr gern – sende uns deine Rückrufwünsche über einen der Kontaktwege.');
+                 }
+             );
+         }
+
+         function startConversation() {
+             advisorState = {};
+             messages.replaceChildren();
+             const expiringFavorite = getFavoriteExpiringToday();
+             if (expiringFavorite) {
+                 advisorState.focusOffer = expiringFavorite;
+                 addMessage(`Willkommen zurück! Dein Favorit „${expiringFavorite.title}“ ist nur noch heute gültig. Soll ich die Verfügbarkeit direkt für dich prüfen?`);
+                 setActions('Ich kann sofort helfen', [
+                     { label: 'Ja, Verfügbarkeit prüfen', run: () => { advisorState.goal = 'Verfügbarkeitsprüfung für einen heute endenden Favoriten'; finishWithContact(`Wir prüfen jetzt gern, ob „${expiringFavorite.title}“ noch verfügbar ist.`); } },
+                     { label: 'Meine Favoriten ansehen', run: checkFavorites },
+                     { label: 'Andere Angebote finden', run: startOfferFinder }
+                 ]);
+             } else {
+                 addMessage('Hallo, ich bin dein digitaler Reiseassistent von Core Cruises. Ich helfe dir, Angebote einzuordnen und die richtige Anfrage für unser Beratungsteam vorzubereiten.');
+                 setActions('Wobei darf ich helfen?', [
+                     { label: 'Passendes Angebot finden', run: startOfferFinder },
+                     { label: 'Meine Favoriten prüfen', run: checkFavorites },
+                     { label: 'Aktuelle Auswahl beraten', run: adviseCurrentSelection },
+                     { label: 'Rückruf anfragen', run: requestCallback }
+                 ]);
+             }
+             refreshContactLinks();
+         }
+
+         form.addEventListener('submit', event => {
+             event.preventDefault();
+             const answer = input.value.trim();
+             if (!submitTextAnswer) return;
+             const handler = submitTextAnswer;
+             submitTextAnswer = null;
+             form.hidden = true;
+             handler(answer);
+         });
          toggle.addEventListener('click', () => setOpen(true));
          close.addEventListener('click', () => setOpen(false));
+         restart.addEventListener('click', startConversation);
          document.addEventListener('keydown', event => {
              if (event.key === 'Escape') setOpen(false);
          });
-         updateChatContent();
+
+         startConversation();
          window.setTimeout(() => setOpen(true), 1000);
      })();
  </script>
