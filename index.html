@@ -202,6 +202,9 @@
 
      .offers-toolbar { display:flex; align-items:center; justify-content:space-between; gap:16px; margin:0 0 18px; }
      .results-count { margin:0; color:#24364d; font-size:14px; font-weight:600; }
+     .btn-show-all { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:9px 13px; color:var(--primary); background:#fff; border:1px solid rgba(0, 51, 102, .24); border-radius:8px; cursor:pointer; font:inherit; font-size:13px; font-weight:700; }
+     .btn-show-all:hover { color:#fff; background:var(--primary); border-color:var(--primary); }
+     .btn-show-all[hidden] { display:none; }
      .sort-control { position:relative; }
      .sort-button { min-width:220px; display:inline-flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 14px; color:var(--primary); background:#ffffff; border:1px solid rgba(0, 51, 102, .2); border-radius:9px; cursor:pointer; font:inherit; font-size:14px; font-weight:700; box-shadow:0 3px 10px rgba(10,26,47,.08); }
      .sort-button:hover, .sort-button[aria-expanded="true"] { border-color:var(--primary); box-shadow:0 5px 15px rgba(10,26,47,.14); }
@@ -407,6 +410,9 @@
 
          <div class="offers-toolbar">
              <p class="results-count" id="resultsCount" role="status" aria-live="polite"></p>
+             <button class="btn-show-all" id="showAllOffers" type="button" onclick="showAllOffers()" hidden>
+                 <i class="fa-solid fa-list" aria-hidden="true"></i> Alle Angebote ansehen
+             </button>
              <div class="sort-control">
                  <button class="sort-button" id="sortButton" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="sortMenu">
                      <span><i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i> Sortieren: <span id="sortButtonLabel">Bald ablaufend</span></span>
@@ -1373,6 +1379,7 @@
          const resultsCount = document.getElementById('resultsCount');
 
          const sharedOffer = Number(new URLSearchParams(window.location.search).get('offer'));
+         document.getElementById('showAllOffers').hidden = !(Number.isInteger(sharedOffer) && sharedOffer > 0);
          const filtered = getActiveOffers().filter(offer => {
              if (Number.isInteger(sharedOffer) && sharedOffer > 0 && offer.id !== sharedOffer) return false;
              if (selectedLines.length > 0 && !selectedLines.includes(offer.reederei)) return false;
@@ -1463,6 +1470,12 @@
 
              grid.appendChild(card);
          });
+     }
+
+     function showAllOffers() {
+         const url = new URL(window.location.href);
+         url.searchParams.delete('offer');
+         window.location.href = url.toString();
      }
 
      function toggleContact(id) {
