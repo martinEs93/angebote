@@ -725,12 +725,12 @@
          return {
              validUntil: '2026-10-22',
              reederei: 'MSC',
-             tarif: 'BELLA',
              aktion: 'MSC Winter Special',
              promo: 'MSC Winter Special',
              legal: WINTER_SPECIAL_LEGAL,
              addons: WINTER_SPECIAL_ADDONS,
              ...details,
+             ...(details.kabine === 'Suite' ? { erlebniswelt: 'AUREA' } : {}),
              preisNumeric: lowestPrice,
              preisDisplay: `ab ${winterEuro(lowestPrice)} p.P.*`
          };
@@ -830,20 +830,20 @@
                  ['2026-12-06','2026-12-13',1149],['2026-12-13','2026-12-20',1179],['2026-12-20','2026-12-27',1279],['2026-12-27','2027-01-03',1889],['2027-01-03','2027-01-10',1319],['2027-01-10','2027-01-17',1029],['2027-01-17','2027-01-24',919],['2027-01-24','2027-01-31',919],['2027-01-31','2027-02-07',909],['2027-02-07','2027-02-14',1049],['2027-02-14','2027-02-21',959],['2027-02-21','2027-02-28',959],['2027-02-28','2027-03-07',889],['2027-03-07','2027-03-14',1049],['2027-03-14','2027-03-21',1099],['2027-03-21','2027-03-28',1409],['2027-03-28','2027-04-04',1389]
              ])
          }),
-         createWinterSpecialOffer({
-             id: 34, title: '7 Nächte Mittelmeer ab Barcelona', schiff: 'MSC World Asia', dauer: '8 Tage · 7 Nächte (Dez 2026 – Mär 2027)', kabine: 'Innenkabine', region: 'Mittelmeer', image: 'https://i.postimg.cc/FR9NSspm/Mittelmeer-ASIA.jpg', route: WORLD_ASIA_BARCELONA_ROUTE,
+        createWinterSpecialOffer({
+            id: 34, title: '7 Nächte Mittelmeer ab Barcelona', schiff: 'MSC World Asia', dauer: '8 Tage · 7 Nächte (Dez 2026 – Mär 2027)', kabine: 'Innenkabine', region: 'Mittelmeer', image: 'https://i.postimg.cc/FR9NSspm/Mittelmeer-ASIA.jpg', flight: 'optional', route: WORLD_ASIA_BARCELONA_ROUTE,
              departurePrices: winterVariablePriceDepartures([
                  ['2026-12-04','2026-12-11',989],['2026-12-11','2026-12-18',789],['2026-12-18','2026-12-25',819],['2026-12-25','2027-01-01',1449],['2027-01-01','2027-01-08',969],['2027-01-08','2027-01-15',699],['2027-01-15','2027-01-22',769],['2027-01-22','2027-01-29',769],['2027-01-29','2027-02-05',689],['2027-02-05','2027-02-12',799],['2027-02-12','2027-02-19',749],['2027-02-19','2027-02-26',859],['2027-02-26','2027-03-05',739],['2027-03-05','2027-03-12',849],['2027-03-12','2027-03-19',799],['2027-03-19','2027-03-26',1069],['2027-03-26','2027-04-02',1119]
              ])
          }),
-         createWinterSpecialOffer({
-             id: 35, title: '7 Nächte Mittelmeer ab Barcelona', schiff: 'MSC World Asia', dauer: '8 Tage · 7 Nächte (Dez 2026 – Mär 2027)', kabine: 'Meerblickkabine', region: 'Mittelmeer', image: 'https://i.postimg.cc/FR9NSspm/Mittelmeer-ASIA.jpg', route: WORLD_ASIA_BARCELONA_ROUTE,
+        createWinterSpecialOffer({
+            id: 35, title: '7 Nächte Mittelmeer ab Barcelona', schiff: 'MSC World Asia', dauer: '8 Tage · 7 Nächte (Dez 2026 – Mär 2027)', kabine: 'Meerblickkabine', region: 'Mittelmeer', image: 'https://i.postimg.cc/FR9NSspm/Mittelmeer-ASIA.jpg', flight: 'optional', route: WORLD_ASIA_BARCELONA_ROUTE,
              departurePrices: winterVariablePriceDepartures([
                  ['2026-12-04','2026-12-11',1019],['2026-12-11','2026-12-18',909],['2026-12-18','2026-12-25',1029],['2026-12-25','2027-01-01',1639],['2027-01-01','2027-01-08',1139],['2027-01-08','2027-01-15',849],['2027-01-15','2027-01-22',919],['2027-01-22','2027-01-29',859],['2027-01-29','2027-02-05',839],['2027-02-05','2027-02-12',1109],['2027-02-12','2027-02-19',949],['2027-02-19','2027-02-26',1009],['2027-02-26','2027-03-05',889],['2027-03-05','2027-03-12',1049],['2027-03-12','2027-03-19',959],['2027-03-19','2027-03-26',1279],['2027-03-26','2027-04-02',1459]
              ])
          }),
-         createWinterSpecialOffer({
-             id: 36, title: '7 Nächte Mittelmeer ab Barcelona', schiff: 'MSC World Asia', dauer: '8 Tage · 7 Nächte (Dez 2026 – Mär 2027)', kabine: 'Balkonkabine', region: 'Mittelmeer', image: 'https://i.postimg.cc/FR9NSspm/Mittelmeer-ASIA.jpg', route: WORLD_ASIA_BARCELONA_ROUTE,
+        createWinterSpecialOffer({
+            id: 36, title: '7 Nächte Mittelmeer ab Barcelona', schiff: 'MSC World Asia', dauer: '8 Tage · 7 Nächte (Dez 2026 – Mär 2027)', kabine: 'Balkonkabine', region: 'Mittelmeer', image: 'https://i.postimg.cc/FR9NSspm/Mittelmeer-ASIA.jpg', flight: 'optional', route: WORLD_ASIA_BARCELONA_ROUTE,
              departurePrices: winterVariablePriceDepartures([
                  ['2026-12-04','2026-12-11',1109],['2026-12-11','2026-12-18',1019],['2026-12-18','2026-12-25',1159],['2026-12-25','2027-01-01',1769],['2027-01-01','2027-01-08',1119],['2027-01-08','2027-01-15',939],['2027-01-15','2027-01-22',1049],['2027-01-22','2027-01-29',989],['2027-01-29','2027-02-05',969],['2027-02-05','2027-02-12',1239],['2027-02-12','2027-02-19',1079],['2027-02-19','2027-02-26',1139],['2027-02-26','2027-03-05',1019],['2027-03-05','2027-03-12',1119],['2027-03-12','2027-03-19',1089],['2027-03-19','2027-03-26',1369],['2027-03-26','2027-04-02',1609]
              ])
@@ -3156,7 +3156,9 @@
                      <div class="detail-row"><span class="detail-label">Schiff:</span><span class="detail-value">${offer.schiff}</span></div>
                      <div class="detail-row"><span class="detail-label">Dauer:</span><span class="detail-value">${offer.dauer}</span></div>
                      <div class="detail-row"><span class="detail-label">Kabinenart:</span><span class="detail-value">${offer.kabine}</span></div>
-                     <div class="detail-row"><span class="detail-label">Tarif:</span><span class="detail-value">${offer.tarif}</span></div>
+                    ${offer.aktion === 'MSC Winter Special'
+                        ? (offer.kabine === 'Suite' ? `<div class="detail-row"><span class="detail-label">Erlebniswelt:</span><span class="detail-value">${offer.erlebniswelt || 'AUREA'}</span></div>` : '')
+                        : `<div class="detail-row"><span class="detail-label">Tarif:</span><span class="detail-value">${offer.tarif}</span></div>`}
                      ${offer.aktion ? `<div class="detail-row"><span class="detail-label">Aktion:</span><span class="detail-value">${offer.aktion}</span></div>` : ''}
 
                      ${offer.promo ? `<div class="promo-box"><i class="fa-solid fa-tags"></i> ${offer.promo}</div>` : ''}
