@@ -1504,11 +1504,36 @@
          return berlin.date < offer.validUntil || (berlin.date === offer.validUntil && berlin.hour < OFFER_EXPIRY_HOUR);
      }
 
-    function getActiveOffers() {
-        // Array.prototype.filter übergibt zusätzlich Index und Array. Der Index darf
-        // nicht als optionaler `now`-Parameter von isOfferActive interpretiert werden.
-        return offersData.filter(offer => isOfferActive(offer));
-    }
+     // Bei terminierten Angeboten ist eine Abfahrt ab ihrem Abreisetag nicht mehr buchbar.
+     // Die Datumswerte sind bewusst ISO-Daten, damit der Vergleich unabhängig von der
+     // Browser-Sprache zuverlässig nach Berliner Kalenderdatum funktioniert.
+     function getBookableDepartures(offer, now = new Date()) {
+         if (!Array.isArray(offer.departurePrices)) return [];
+         const todayInBerlin = getBerlinClock(now).date;
+         return offer.departurePrices.filter(departure =>
+             /^\d{4}-\d{2}-\d{2}$/.test(departure.start) && departure.start > todayInBerlin
+         );
+     }
+
+     function hasBookableDeparture(offer, now = new Date()) {
+         return !Array.isArray(offer.departurePrices) || getBookableDepartures(offer, now).length > 0;
+     }
+
+     function getCurrentOfferPrice(offer, now = new Date()) {
+         const departures = getBookableDepartures(offer, now);
+         return departures.length ? Math.min(...departures.map(departure => departure.price)) : offer.preisNumeric;
+     }
+
+     function getCurrentOfferPriceDisplay(offer, now = new Date()) {
+         const departures = getBookableDepartures(offer, now);
+         return departures.length ? `ab ${winterEuro(getCurrentOfferPrice(offer, now))} p.P.*` : offer.preisDisplay;
+     }
+
+     function getActiveOffers(now = new Date()) {
+         // Array.prototype.filter übergibt zusätzlich Index und Array. Der Index darf
+         // nicht als optionaler `now`-Parameter interpretiert werden.
+         return offersData.filter(offer => isOfferActive(offer, now) && hasBookableDeparture(offer, now));
+     }
 
      let offerVisibilityKey = getOfferVisibilityKey();
      let offerExpiryRefreshTimer = null;
@@ -1566,16 +1591,16 @@
 
          switch (activeSort) {
              case 'priceAsc':
-                 return sorted.sort((a, b) => a.preisNumeric - b.preisNumeric || byText('title')(a, b));
+                 return sorted.sort((a, b) => getCurrentOfferPrice(a) - getCurrentOfferPrice(b) || byText('title')(a, b));
              case 'priceDesc':
-                 return sorted.sort((a, b) => b.preisNumeric - a.preisNumeric || byText('title')(a, b));
+                 return sorted.sort((a, b) => getCurrentOfferPrice(b) - getCurrentOfferPrice(a) || byText('title')(a, b));
              case 'departurePortAsc':
-                 return sorted.sort((a, b) => byText('departurePort')(a, b) || a.preisNumeric - b.preisNumeric);
+                 return sorted.sort((a, b) => byText('departurePort')(a, b) || getCurrentOfferPrice(a) - getCurrentOfferPrice(b));
              case 'cruiseLineAsc':
                  return sorted.sort((a, b) => byText('reederei')(a, b) || byText('title')(a, b));
              default:
                  // Angebote mit dem nächsten Ablaufdatum stehen bewusst zuerst.
-                 return sorted.sort((a, b) => a.validUntil.localeCompare(b.validUntil) || a.preisNumeric - b.preisNumeric);
+                 return sorted.sort((a, b) => a.validUntil.localeCompare(b.validUntil) || getCurrentOfferPrice(a) - getCurrentOfferPrice(b));
          }
      }
 
@@ -1654,7 +1679,7 @@
              getActiveOffers().filter(o =>
                  (selectedRegions.length === 0 || selectedRegions.includes(o.region)) &&
                  (selectedActions.length === 0 || selectedActions.includes(o.aktion)) &&
-                 (selectedPrices.length === 0 || matchesPrice(o.preisNumeric, selectedPrices))
+                (selectedPrices.length === 0 || matchesPrice(getCurrentOfferPrice(o), selectedPrices))
              ).map(o => o.reederei)
          );
 
@@ -1662,7 +1687,7 @@
          const validPrices = new Set(
              priceRangesList.filter(p =>
                  getActiveOffers().some(o =>
-                     o.preisNumeric >= p.min && o.preisNumeric <= p.max &&
+                    getCurrentOfferPrice(o) >= p.min && getCurrentOfferPrice(o) <= p.max &&
                      (selectedLines.length === 0 || selectedLines.includes(o.reederei)) &&
                      (selectedRegions.length === 0 || selectedRegions.includes(o.region)) &&
                      (selectedActions.length === 0 || selectedActions.includes(o.aktion))
@@ -1675,7 +1700,7 @@
              getActiveOffers().filter(o =>
                  (selectedLines.length === 0 || selectedLines.includes(o.reederei)) &&
                  (selectedActions.length === 0 || selectedActions.includes(o.aktion)) &&
-                 (selectedPrices.length === 0 || matchesPrice(o.preisNumeric, selectedPrices))
+                (selectedPrices.length === 0 || matchesPrice(getCurrentOfferPrice(o), selectedPrices))
              ).map(o => o.region)
          );
 
@@ -1684,7 +1709,7 @@
              getActiveOffers().filter(o =>
                  (selectedLines.length === 0 || selectedLines.includes(o.reederei)) &&
                  (selectedRegions.length === 0 || selectedRegions.includes(o.region)) &&
-                 (selectedPrices.length === 0 || matchesPrice(o.preisNumeric, selectedPrices))
+                (selectedPrices.length === 0 || matchesPrice(getCurrentOfferPrice(o), selectedPrices))
              ).map(o => o.aktion)
          );
 
@@ -1791,13 +1816,14 @@
      function getSelectedDeparture(id) {
          const offer = offersData.find(item => item.id === id);
          const selectedStart = selectedDepartures.get(id);
-         return offer?.departurePrices?.find(departure => departure.start === selectedStart) ?? null;
+         return getBookableDepartures(offer ?? {}).find(departure => departure.start === selectedStart) ?? null;
      }
 
      function renderDeparturePrices(offer) {
-         if (!Array.isArray(offer.departurePrices) || offer.departurePrices.length === 0) return '';
+         const departures = getBookableDepartures(offer);
+         if (!Array.isArray(offer.departurePrices) || departures.length === 0) return '';
 
-         const bestPrice = Math.min(...offer.departurePrices.map(departure => departure.price));
+         const bestPrice = Math.min(...departures.map(departure => departure.price));
          const selectedDeparture = getSelectedDeparture(offer.id);
          const selectionNote = selectedDeparture
              ? `Ausgewählt: <strong>${selectedDeparture.label}</strong> · ${winterEuro(selectedDeparture.price)} p.P.*. Deine Anfrage bezieht sich auf diese Abfahrt.`
@@ -1808,7 +1834,7 @@
                  <h4>Abfahrten &amp; Preise</h4>
                  <p>Preis pro Person bei der jeweiligen Abfahrt. Wähle deinen gewünschten Termin aus.</p>
                  <div class="departure-price-list">
-                     ${offer.departurePrices.map(departure => {
+                     ${departures.map(departure => {
                          const isBest = departure.price === bestPrice;
                          const isSelected = selectedDeparture?.start === departure.start;
                          return `
@@ -1827,7 +1853,7 @@
 
      function selectDeparture(id, start) {
          const offer = offersData.find(item => item.id === id);
-         const departure = offer?.departurePrices?.find(item => item.start === start);
+         const departure = getBookableDepartures(offer ?? {}).find(item => item.start === start);
          if (!offer || !departure) return;
 
          selectedDepartures.set(id, start);
@@ -1881,7 +1907,7 @@
              if (selectedRegions.length > 0 && !selectedRegions.includes(offer.region)) return false;
              if (selectedActions.length > 0 && !selectedActions.includes(offer.aktion)) return false;
              if (selectedPrices.length > 0) {
-                 if (!matchesPrice(offer.preisNumeric, selectedPrices)) return false;
+                 if (!matchesPrice(getCurrentOfferPrice(offer), selectedPrices)) return false;
              }
              return true;
          });
@@ -1901,6 +1927,7 @@
              const card = document.createElement('article');
              card.className = 'route-card';
              const selectedDeparture = getSelectedDeparture(offer.id);
+             const currentPriceDisplay = getCurrentOfferPriceDisplay(offer);
 
              card.innerHTML = `
                  <div class="card-header">
@@ -1921,7 +1948,7 @@
                              <i class="fa-solid fa-anchor" aria-hidden="true"></i>
                              <div><span>Abfahrtshafen</span><strong>${offer.departurePort}</strong></div>
                          </div>
-                         <div class="price-badge">${offer.preisDisplay}</div>
+                            <div class="price-badge">${currentPriceDisplay}</div>
                      </div>
                      <div class="detail-row"><span class="detail-label">Reederei:</span><span class="detail-value">${offer.reederei}</span></div>
                      <div class="detail-row"><span class="detail-label">Schiff:</span><span class="detail-value">${offer.schiff}</span></div>
@@ -2024,7 +2051,7 @@
      }
 
      function getOfferShareText(offer) {
-         return `${offer.title} – ${offer.reederei}, ${offer.schiff}, ab ${offer.preisDisplay}`;
+         return `${offer.title} – ${offer.reederei}, ${offer.schiff}, Preis ${getCurrentOfferPriceDisplay(offer)}`;
      }
 
      async function shareOffer(id) {
@@ -2109,7 +2136,7 @@
              return;
          }
          const departureLine = selectedDeparture ? `Abfahrt: ${selectedDeparture.label}\n` : '';
-         const displayedPrice = selectedDeparture ? `${winterEuro(selectedDeparture.price)} p.P.*` : offer.preisDisplay;
+         const displayedPrice = selectedDeparture ? `${winterEuro(selectedDeparture.price)} p.P.*` : getCurrentOfferPriceDisplay(offer);
 
          const message = `Hallo! Ich habe Interesse an folgendem Angebot:
 *${offer.title}*
@@ -2131,7 +2158,7 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
              requireDepartureSelection(id);
              return;
          }
-         const departureLine = selectedDeparture ? `\n- Abfahrt: ${selectedDeparture.label}\n- Preis: ${winterEuro(selectedDeparture.price)} p.P.*` : `\n- Preis: ${offer.preisDisplay}`;
+         const departureLine = selectedDeparture ? `\n- Abfahrt: ${selectedDeparture.label}\n- Preis: ${winterEuro(selectedDeparture.price)} p.P.*` : `\n- Preis: ${getCurrentOfferPriceDisplay(offer)}`;
 
          const subject = `Anfrage: ${offer.title}${selectedDeparture ? ` – ${selectedDeparture.label}` : ''}`;
          const body = `Hallo Team von corecruises.de,\n\nich habe Interesse an folgendem Angebot auf angebote.corecruises.de:\n- Angebot: ${offer.title}\n- Reederei: ${offer.reederei}\n- Schiff: ${offer.schiff}\n- Kabine: ${offer.kabine}${departureLine}\n\nBitte senden Sie mir ein unverbindliches Angebot zu.\n\nViele Grüße`;
@@ -2257,7 +2284,7 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
              return (!criteria.lines.length || criteria.lines.includes(offer.reederei)) &&
                  (!criteria.regions.length || criteria.regions.includes(offer.region)) &&
                  (!criteria.actions.length || criteria.actions.includes(offer.aktion)) &&
-                 (!criteria.prices.length || matchesPrice(offer.preisNumeric, criteria.prices));
+                (!criteria.prices.length || matchesPrice(getCurrentOfferPrice(offer), criteria.prices));
          }
 
          function getMatchingOffers(criteria) {
@@ -2317,7 +2344,7 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
              const parts = ['Hallo Core Cruises, ich wünsche eine persönliche Beratung zu einem Kreuzfahrtangebot.'];
              if (advisorState.goal) parts.push(`Anliegen: ${advisorState.goal}.`);
              if (advisorState.priority) parts.push(`Besonders wichtig: ${advisorState.priority}.`);
-             if (advisorState.focusOffer) parts.push(`Favorisiertes Angebot: ${advisorState.focusOffer.title} (${advisorState.focusOffer.preisDisplay}).`);
+            if (advisorState.focusOffer) parts.push(`Favorisiertes Angebot: ${advisorState.focusOffer.title} (${getCurrentOfferPriceDisplay(advisorState.focusOffer)}).`);
              if (advisorState.favoriteTitles?.length) parts.push(`Gespeicherte Favoriten: ${advisorState.favoriteTitles.join(', ')}.`);
              if (advisorState.urgentOfferTitles?.length) parts.push(`Zeitkritische Favoriten, gültig bis heute 18 Uhr: ${advisorState.urgentOfferTitles.join(', ')}.`);
              if (advisorState.criteria) {
@@ -2389,7 +2416,7 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
 
          function askOfferBudget(criteria) {
              const matches = getMatchingOffers(criteria);
-             const ranges = priceRangesList.filter(range => matches.some(offer => offer.preisNumeric >= range.min && offer.preisNumeric <= range.max));
+            const ranges = priceRangesList.filter(range => matches.some(offer => getCurrentOfferPrice(offer) >= range.min && getCurrentOfferPrice(offer) <= range.max));
              addMessage('Damit ich attraktive Angebote sinnvoll einordne: Welcher Preisrahmen passt ungefähr pro Person?');
              setActions('Budget auswählen', addOfferExitActions(criteria, [
                  ...ranges.map(range => ({ label:range.label, run:() => continueOfferConcierge({ ...criteria, prices:[range.value] }) })),
@@ -2437,9 +2464,9 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
          function showOfferConciergeSummary(criteria) {
              const matches = getMatchingOffers(criteria);
              advisorState.criteria = criteria;
-             const bestOffer = [...matches].sort((a, b) => a.preisNumeric - b.preisNumeric)[0];
+            const bestOffer = [...matches].sort((a, b) => getCurrentOfferPrice(a) - getCurrentOfferPrice(b))[0];
              const urgency = bestOffer ? getOfferExpiryDescription(bestOffer) : '';
-             addMessage(`Sehr gut – ${matches.length} ${matches.length === 1 ? 'passendes Angebot' : 'passende Angebote'} bleiben übrig.${bestOffer ? ` Der aktuell günstigste Einstieg liegt bei ${bestOffer.preisDisplay} für „${bestOffer.title}“.` : ''}${urgency ? ` ${urgency}` : ''}`);
+            addMessage(`Sehr gut – ${matches.length} ${matches.length === 1 ? 'passendes Angebot' : 'passende Angebote'} bleiben übrig.${bestOffer ? ` Der aktuell günstigste Einstieg liegt bei ${getCurrentOfferPriceDisplay(bestOffer)} für „${bestOffer.title}“.` : ''}${urgency ? ` ${urgency}` : ''}`);
              setActions('Wie möchtest du weitergehen?', [
                  { label:'Angebote vergleichen', run:() => askOfferPersonalDetails(criteria) },
                  { label:'Jetzt Angebote anzeigen', run:() => showOfferResults(criteria) },
