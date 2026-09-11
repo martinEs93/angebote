@@ -216,6 +216,18 @@
      .sort-option { display:block; width:100%; padding:10px 12px; color:#24364d; text-align:left; background:transparent; border:0; border-radius:6px; cursor:pointer; font:inherit; font-size:14px; }
      .sort-option:hover, .sort-option[aria-current="true"] { color:var(--primary); background:#eef5fb; font-weight:700; }
 
+     .winter-refinement { margin-top:18px; padding:16px; border:1px solid #b9d4e9; border-radius:10px; background:linear-gradient(135deg, #f1f8fd 0%, #ffffff 100%); }
+     .winter-refinement-header { display:flex; align-items:center; justify-content:space-between; gap:14px; width:100%; padding:0; color:var(--primary); text-align:left; background:transparent; border:0; cursor:pointer; font:inherit; }
+     .winter-refinement-title { display:flex; align-items:center; gap:9px; font-size:15px; font-weight:800; }
+     .winter-refinement-title i { color:#1f78ae; }
+     .winter-refinement-count { color:#55718c; font-size:12px; font-weight:600; }
+     .winter-refinement-body { margin-top:15px; }
+     .winter-refinement-hint { margin:0 0 14px; color:#526a7e; font-size:13px; line-height:1.45; }
+     .winter-filter-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:15px; }
+     .winter-filter-actions { display:flex; justify-content:flex-end; margin-top:14px; padding-top:14px; border-top:1px dashed #bfd4e4; }
+     .btn-reset-winter { padding:8px 12px; color:#315c7f; background:#fff; border:1px solid #b9d4e9; border-radius:7px; cursor:pointer; font:inherit; font-size:13px; font-weight:700; }
+     .btn-reset-winter:hover { color:#fff; background:#315c7f; border-color:#315c7f; }
+
      .route-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:25px; position:relative; z-index:1; }
      .route-card { position:relative; background:#ffffff; border-radius:14px; overflow:hidden; box-shadow:0 6px 18px rgba(0,0,0,0.1); display:flex; flex-direction:column; transition:transform .2s, box-shadow .2s; border:1px solid rgba(0,0,0,0.08); color:#2c3e50; }
      .route-card::before { content:""; display:block; height:5px; background:linear-gradient(90deg, var(--primary), #216aa7); }
@@ -344,6 +356,11 @@
          .container { padding:20px 15px; }
          .filter-grid-4col { grid-template-columns:1fr; }
          .filter-actions { flex-wrap:wrap; }
+         .winter-refinement { padding:14px; }
+         .winter-refinement-header { align-items:flex-start; }
+         .winter-refinement-title { align-items:flex-start; }
+         .winter-filter-actions { justify-content:stretch; }
+         .btn-reset-winter { width:100%; }
          .offers-toolbar { align-items:stretch; flex-direction:column; }
          .sort-button { width:100%; }
          .sort-menu { left:0; right:auto; width:100%; }
@@ -502,6 +519,25 @@
                  </button>
                  <button class="btn-reset-all" onclick="resetAllFilters()"><i class="fa-solid fa-rotate-right"></i> Alle Filter zurücksetzen</button>
              </div>
+
+             <section class="winter-refinement" id="winterRefinement" hidden aria-labelledby="winterRefinementTitle">
+                 <button class="winter-refinement-header" id="winterRefinementToggle" type="button" onclick="toggleWinterRefinement()" aria-expanded="false" aria-controls="winterRefinementBody">
+                     <span class="winter-refinement-title" id="winterRefinementTitle"><i class="fa-solid fa-sliders" aria-hidden="true"></i> MSC Winter Specials verfeinern <span class="winter-refinement-count" id="winterRefinementCount"></span></span>
+                     <i class="fa-solid fa-chevron-down" id="winterRefinementChevron" aria-hidden="true"></i>
+                 </button>
+                 <div class="winter-refinement-body" id="winterRefinementBody" hidden>
+                     <p class="winter-refinement-hint">Grenze die Winter Specials nach deinen Wünschen ein. Die Auswahl gilt nur für diese Aktion.</p>
+                     <div class="winter-filter-grid">
+                         <div class="filter-group"><label>Schiff:</label><div class="custom-multiselect"><div class="select-box" onclick="toggleDropdown('winterShipDropdown')"><span id="winterShipSelectText">Alle Schiffe</span></div><div class="checkboxes-dropdown" id="winterShipDropdown"></div></div></div>
+                         <div class="filter-group"><label>Abfahrtshafen:</label><div class="custom-multiselect"><div class="select-box" onclick="toggleDropdown('winterPortDropdown')"><span id="winterPortSelectText">Alle Häfen</span></div><div class="checkboxes-dropdown" id="winterPortDropdown"></div></div></div>
+                         <div class="filter-group"><label>Reisedauer:</label><div class="custom-multiselect"><div class="select-box" onclick="toggleDropdown('winterDurationDropdown')"><span id="winterDurationSelectText">Alle Dauern</span></div><div class="checkboxes-dropdown" id="winterDurationDropdown"></div></div></div>
+                         <div class="filter-group"><label>Kabinenart:</label><div class="custom-multiselect"><div class="select-box" onclick="toggleDropdown('winterCabinDropdown')"><span id="winterCabinSelectText">Alle Kabinen</span></div><div class="checkboxes-dropdown" id="winterCabinDropdown"></div></div></div>
+                         <div class="filter-group"><label>Flug:</label><div class="custom-multiselect"><div class="select-box" onclick="toggleDropdown('winterFlightDropdown')"><span id="winterFlightSelectText">Alle Flugoptionen</span></div><div class="checkboxes-dropdown" id="winterFlightDropdown"></div></div></div>
+                         <div class="filter-group"><label>Abfahrtsmonat:</label><div class="custom-multiselect"><div class="select-box" onclick="toggleDropdown('winterMonthDropdown')"><span id="winterMonthSelectText">Alle Monate</span></div><div class="checkboxes-dropdown" id="winterMonthDropdown"></div></div></div>
+                     </div>
+                     <div class="winter-filter-actions"><button class="btn-reset-winter" type="button" onclick="resetWinterRefinement()"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Winter-Filter zurücksetzen</button></div>
+                 </div>
+             </section>
          </div>
 
          <div class="offers-toolbar">
@@ -518,6 +554,7 @@
                      <button class="sort-option" type="button" role="menuitem" data-sort="expiryAsc" aria-current="true">Bald ablaufend</button>
                      <button class="sort-option" type="button" role="menuitem" data-sort="priceAsc">Preis: niedrig nach hoch</button>
                      <button class="sort-option" type="button" role="menuitem" data-sort="priceDesc">Preis: hoch nach niedrig</button>
+                     <button class="sort-option" type="button" role="menuitem" data-sort="departureDateAsc">Nächste Abfahrt</button>
                      <button class="sort-option" type="button" role="menuitem" data-sort="departurePortAsc">Abfahrtshafen: A–Z</button>
                      <button class="sort-option" type="button" role="menuitem" data-sort="cruiseLineAsc">Reederei: A–Z</button>
                  </div>
@@ -2053,6 +2090,14 @@
      let selectedPrices = [];
      let selectedRegions = [];
      let selectedActions = [];
+     let selectedWinterShips = [];
+     let selectedWinterPorts = [];
+     let selectedWinterDurations = [];
+     let selectedWinterCabins = [];
+     let selectedWinterFlights = [];
+     let selectedWinterMonths = [];
+     let winterRefinementExpanded = true;
+     const WINTER_SPECIAL_ACTION = 'MSC Winter Special';
      let activeSort = 'expiryAsc';
      const FAVORITES_STORAGE_KEY = 'corecruises-offer-favorites';
      let showingFavorites = false;
@@ -2067,7 +2112,7 @@
          // Bei deaktiviertem Speicher startet die Liste einfach leer.
      }
      
-     // URL-Parameter: reederei, preis, region und aktion.
+     // URL-Parameter: allgemeine Filter plus Winter-Special-Verfeinerung.
      // Mehrere Werte sind möglich, z. B. ?aktion=LAST+MINUTE&aktion=CATCH+OF+THE+WEEK
      const URL_FILTERS = {
          reederei: {
@@ -2089,6 +2134,36 @@
              get: () => selectedActions,
              set: values => { selectedActions = values; },
              values: () => getActions()
+         },
+         schiff: {
+             get: () => selectedWinterShips,
+             set: values => { selectedWinterShips = values; },
+             values: () => getWinterShips()
+         },
+         hafen: {
+             get: () => selectedWinterPorts,
+             set: values => { selectedWinterPorts = values; },
+             values: () => getWinterPorts()
+         },
+         dauer: {
+             get: () => selectedWinterDurations,
+             set: values => { selectedWinterDurations = values; },
+             values: () => getWinterDurations()
+         },
+         kabine: {
+             get: () => selectedWinterCabins,
+             set: values => { selectedWinterCabins = values; },
+             values: () => getWinterCabins()
+         },
+         flug: {
+             get: () => selectedWinterFlights,
+             set: values => { selectedWinterFlights = values; },
+             values: () => getWinterFlightOptions().map(option => option.value)
+         },
+         monat: {
+             get: () => selectedWinterMonths,
+             set: values => { selectedWinterMonths = values; },
+             values: () => getWinterMonthOptions().map(option => option.value)
          }
      };
 
@@ -2101,6 +2176,27 @@
              selectedRegions.length ? `${selectedRegions.length} Region(en) gewählt` : 'Alle Regionen';
          document.getElementById('actionSelectText').textContent =
              selectedActions.length ? `${selectedActions.length} Aktion(en) gewählt` : 'Alle Aktionen';
+         updateWinterFilterSummaryLabels();
+     }
+
+     function updateWinterFilterSummaryLabels() {
+         const summaries = [
+             ['winterShipSelectText', selectedWinterShips, 'Alle Schiffe'],
+             ['winterPortSelectText', selectedWinterPorts, 'Alle Häfen'],
+             ['winterDurationSelectText', selectedWinterDurations, 'Alle Dauern'],
+             ['winterCabinSelectText', selectedWinterCabins, 'Alle Kabinen'],
+             ['winterFlightSelectText', selectedWinterFlights, 'Alle Flugoptionen'],
+             ['winterMonthSelectText', selectedWinterMonths, 'Alle Monate']
+         ];
+
+         summaries.forEach(([id, values, fallback]) => {
+             const element = document.getElementById(id);
+             if (element) element.textContent = values.length ? `${values.length} gewählt` : fallback;
+         });
+
+         const count = selectedWinterShips.length + selectedWinterPorts.length + selectedWinterDurations.length + selectedWinterCabins.length + selectedWinterFlights.length + selectedWinterMonths.length;
+         const countElement = document.getElementById('winterRefinementCount');
+         if (countElement) countElement.textContent = count ? `· ${count} aktiv` : '';
      }
 
      function loadFiltersFromUrl() {
@@ -2717,17 +2813,40 @@
          );
      }
 
+     function getOfferDeparturesForDisplay(offer, now = new Date()) {
+         const departures = getBookableDepartures(offer, now);
+         if (!isWinterRefinementActive() || !isWinterSpecialOffer(offer) || selectedWinterMonths.length === 0) return departures;
+         return departures.filter(departure => selectedWinterMonths.includes(getWinterMonthKey(departure.start)));
+     }
+
+     function getNextDepartureStart(offer) {
+         return getOfferDeparturesForDisplay(offer)
+             .map(departure => departure.start)
+             .sort()[0] || '9999-12-31';
+     }
+
+     function matchesWinterRefinement(offer) {
+         if (!isWinterRefinementActive() || !isWinterSpecialOffer(offer)) return true;
+         if (selectedWinterShips.length && !selectedWinterShips.includes(offer.schiff)) return false;
+         if (selectedWinterPorts.length && !selectedWinterPorts.includes(offer.departurePort)) return false;
+         if (selectedWinterDurations.length && !selectedWinterDurations.includes(getWinterDuration(offer))) return false;
+         if (selectedWinterCabins.length && !selectedWinterCabins.includes(offer.kabine)) return false;
+         if (selectedWinterFlights.length && !selectedWinterFlights.includes(offer.flight || 'none')) return false;
+         if (selectedWinterMonths.length && getOfferDeparturesForDisplay(offer).length === 0) return false;
+         return true;
+     }
+
      function hasBookableDeparture(offer, now = new Date()) {
          return !Array.isArray(offer.departurePrices) || getBookableDepartures(offer, now).length > 0;
      }
 
      function getCurrentOfferPrice(offer, now = new Date()) {
-         const departures = getBookableDepartures(offer, now);
+         const departures = getOfferDeparturesForDisplay(offer, now);
          return departures.length ? Math.min(...departures.map(departure => departure.price)) : offer.preisNumeric;
      }
 
      function getCurrentOfferPriceDisplay(offer, now = new Date()) {
-         const departures = getBookableDepartures(offer, now);
+         const departures = getOfferDeparturesForDisplay(offer, now);
          return departures.length ? `ab ${winterEuro(getCurrentOfferPrice(offer, now))} p.P.*` : offer.preisDisplay;
      }
 
@@ -2779,10 +2898,81 @@
      function getRegions() { return uniqueOfferValues('region'); }
      function getActions() { return uniqueOfferValues('aktion'); }
 
+     function isWinterSpecialOffer(offer) {
+         return offer.aktion === WINTER_SPECIAL_ACTION;
+     }
+
+     function isWinterRefinementActive() {
+         return selectedActions.includes(WINTER_SPECIAL_ACTION);
+     }
+
+     function getWinterDuration(offer) {
+         const match = String(offer.dauer || '').match(/(\d+)\s*Nächte/i);
+         return match ? `${match[1]} Nächte` : String(offer.dauer || 'Andere Dauer');
+     }
+
+     function getWinterMonthKey(startDate) {
+         return String(startDate || '').slice(0, 7);
+     }
+
+     function getWinterMonthLabel(monthKey) {
+         const [year, month] = monthKey.split('-').map(Number);
+         return new Intl.DateTimeFormat('de-DE', { month: 'long', year: 'numeric' })
+             .format(new Date(year, month - 1, 1));
+     }
+
+     function getActiveWinterSpecialOffers() {
+         return getActiveOffers().filter(isWinterSpecialOffer);
+     }
+
+     function getWinterShips() {
+         return [...new Set(getActiveWinterSpecialOffers().map(offer => offer.schiff))].sort((a, b) => a.localeCompare(b, 'de'));
+     }
+
+     function getWinterPorts() {
+         return [...new Set(getActiveWinterSpecialOffers().map(offer => offer.departurePort))].sort((a, b) => a.localeCompare(b, 'de'));
+     }
+
+     function getWinterDurations() {
+         return [...new Set(getActiveWinterSpecialOffers().map(getWinterDuration))]
+             .sort((a, b) => Number.parseInt(a, 10) - Number.parseInt(b, 10));
+     }
+
+     function getWinterCabins() {
+         const order = ['Innenkabine', 'Meerblickkabine', 'Balkonkabine', 'Suite'];
+         return [...new Set(getActiveWinterSpecialOffers().map(offer => offer.kabine))]
+             .sort((a, b) => {
+                 const rankA = order.indexOf(a) === -1 ? 99 : order.indexOf(a);
+                 const rankB = order.indexOf(b) === -1 ? 99 : order.indexOf(b);
+                 return rankA - rankB || a.localeCompare(b, 'de');
+             });
+     }
+
+     function getWinterFlightOptions() {
+         const labels = {
+             included: 'Flug inklusive',
+             optional: 'Flug zubuchbar',
+             none: 'Keine Flugangabe'
+         };
+         const available = new Set(getActiveWinterSpecialOffers().map(offer => offer.flight || 'none'));
+         return ['included', 'optional', 'none']
+             .filter(value => available.has(value))
+             .map(value => ({ value, label: labels[value] }));
+     }
+
+     function getWinterMonthOptions() {
+         const monthKeys = new Set();
+         getActiveWinterSpecialOffers().forEach(offer => {
+             getBookableDepartures(offer).forEach(departure => monthKeys.add(getWinterMonthKey(departure.start)));
+         });
+         return [...monthKeys].sort().map(value => ({ value, label: getWinterMonthLabel(value) }));
+     }
+
      const SORT_LABELS = {
          expiryAsc: 'Bald ablaufend',
          priceAsc: 'Preis: niedrig nach hoch',
          priceDesc: 'Preis: hoch nach niedrig',
+         departureDateAsc: 'Nächste Abfahrt',
          departurePortAsc: 'Abfahrtshafen: A–Z',
          cruiseLineAsc: 'Reederei: A–Z'
      };
@@ -2796,6 +2986,8 @@
                  return sorted.sort((a, b) => getCurrentOfferPrice(a) - getCurrentOfferPrice(b) || byText('title')(a, b));
              case 'priceDesc':
                  return sorted.sort((a, b) => getCurrentOfferPrice(b) - getCurrentOfferPrice(a) || byText('title')(a, b));
+             case 'departureDateAsc':
+                 return sorted.sort((a, b) => getNextDepartureStart(a).localeCompare(getNextDepartureStart(b)) || getCurrentOfferPrice(a) - getCurrentOfferPrice(b));
              case 'departurePortAsc':
                  return sorted.sort((a, b) => byText('departurePort')(a, b) || getCurrentOfferPrice(a) - getCurrentOfferPrice(b));
              case 'cruiseLineAsc':
@@ -2962,6 +3154,92 @@
              label.innerHTML = `<input type="checkbox" value="${a}" ${isChecked ? 'checked' : ''} ${!isAvailable ? 'disabled' : ''} onchange="handleActionChange()"> ${a}`;
              actionDrop.appendChild(label);
          });
+
+         updateWinterRefinementControls();
+     }
+
+     function renderWinterDropdown(dropdownId, options, selectedValues) {
+         const dropdown = document.getElementById(dropdownId);
+         if (!dropdown) return;
+         dropdown.innerHTML = '';
+
+         options.forEach(option => {
+             const value = typeof option === 'string' ? option : option.value;
+             const labelText = typeof option === 'string' ? option : option.label;
+             const label = document.createElement('label');
+             label.className = 'dropdown-option';
+
+             const input = document.createElement('input');
+             input.type = 'checkbox';
+             input.value = value;
+             input.checked = selectedValues.includes(value);
+             input.addEventListener('change', handleWinterFilterChange);
+
+             label.append(input, document.createTextNode(` ${labelText}`));
+             dropdown.appendChild(label);
+         });
+     }
+
+     function updateWinterRefinementControls() {
+         const section = document.getElementById('winterRefinement');
+         const body = document.getElementById('winterRefinementBody');
+         const toggle = document.getElementById('winterRefinementToggle');
+         const chevron = document.getElementById('winterRefinementChevron');
+         if (!section || !body || !toggle || !chevron) return;
+
+         const isVisible = isWinterRefinementActive();
+         section.hidden = !isVisible;
+         if (!isVisible) return;
+
+         body.hidden = !winterRefinementExpanded;
+         toggle.setAttribute('aria-expanded', String(winterRefinementExpanded));
+         chevron.className = `fa-solid fa-chevron-${winterRefinementExpanded ? 'up' : 'down'}`;
+
+         renderWinterDropdown('winterShipDropdown', getWinterShips(), selectedWinterShips);
+         renderWinterDropdown('winterPortDropdown', getWinterPorts(), selectedWinterPorts);
+         renderWinterDropdown('winterDurationDropdown', getWinterDurations(), selectedWinterDurations);
+         renderWinterDropdown('winterCabinDropdown', getWinterCabins(), selectedWinterCabins);
+         renderWinterDropdown('winterFlightDropdown', getWinterFlightOptions(), selectedWinterFlights);
+         renderWinterDropdown('winterMonthDropdown', getWinterMonthOptions(), selectedWinterMonths);
+         updateWinterFilterSummaryLabels();
+     }
+
+     function toggleWinterRefinement() {
+         if (!isWinterRefinementActive()) return;
+         winterRefinementExpanded = !winterRefinementExpanded;
+         updateWinterRefinementControls();
+     }
+
+     function readWinterRefinementSelections() {
+         const selectedValues = id => Array.from(document.querySelectorAll(`#${id} input[type="checkbox"]:checked`)).map(input => input.value);
+         selectedWinterShips = selectedValues('winterShipDropdown');
+         selectedWinterPorts = selectedValues('winterPortDropdown');
+         selectedWinterDurations = selectedValues('winterDurationDropdown');
+         selectedWinterCabins = selectedValues('winterCabinDropdown');
+         selectedWinterFlights = selectedValues('winterFlightDropdown');
+         selectedWinterMonths = selectedValues('winterMonthDropdown');
+     }
+
+     function handleWinterFilterChange() {
+         startNewSearch();
+         readWinterRefinementSelections();
+         selectedDepartures.clear();
+         updateWinterFilterSummaryLabels();
+         saveFiltersToUrl();
+         renderRoutes();
+     }
+
+     function resetWinterRefinement() {
+         selectedWinterShips = [];
+         selectedWinterPorts = [];
+         selectedWinterDurations = [];
+         selectedWinterCabins = [];
+         selectedWinterFlights = [];
+         selectedWinterMonths = [];
+         selectedDepartures.clear();
+         updateWinterFilterSummaryLabels();
+         saveFiltersToUrl();
+         renderRoutes();
      }
 
      function matchesPrice(preis, selectedPriceRanges) {
@@ -3009,6 +3287,13 @@
          selectedPrices = [];
          selectedRegions = [];
          selectedActions = [];
+         selectedWinterShips = [];
+         selectedWinterPorts = [];
+         selectedWinterDurations = [];
+         selectedWinterCabins = [];
+         selectedWinterFlights = [];
+         selectedWinterMonths = [];
+         selectedDepartures.clear();
 
          updateFilterSummaryLabels();
          saveFiltersToUrl();
@@ -3018,11 +3303,11 @@
      function getSelectedDeparture(id) {
          const offer = offersData.find(item => item.id === id);
          const selectedStart = selectedDepartures.get(id);
-         return getBookableDepartures(offer ?? {}).find(departure => departure.start === selectedStart) ?? null;
+         return getOfferDeparturesForDisplay(offer ?? {}).find(departure => departure.start === selectedStart) ?? null;
      }
 
      function renderDeparturePrices(offer) {
-         const departures = getBookableDepartures(offer);
+         const departures = getOfferDeparturesForDisplay(offer);
          if (!Array.isArray(offer.departurePrices) || departures.length === 0) return '';
 
          const bestPrice = Math.min(...departures.map(departure => departure.price));
@@ -3055,7 +3340,7 @@
 
      function selectDeparture(id, start) {
          const offer = offersData.find(item => item.id === id);
-         const departure = getBookableDepartures(offer ?? {}).find(item => item.start === start);
+         const departure = getOfferDeparturesForDisplay(offer ?? {}).find(item => item.start === start);
          if (!offer || !departure) return;
 
          selectedDepartures.set(id, start);
@@ -3111,6 +3396,7 @@
              if (selectedPrices.length > 0) {
                  if (!matchesPrice(getCurrentOfferPrice(offer), selectedPrices)) return false;
              }
+             if (!matchesWinterRefinement(offer)) return false;
              return true;
          });
 
