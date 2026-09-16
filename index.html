@@ -4160,5 +4160,27 @@ Bitte um unverbindliche Beratung und Verfügbarkeitsprüfung.`;
    var AUTOHIDE = Boolean(0);
  </script>
  <script defer src="https://sibforms.com/forms/end-form/build/main.js"></script>
+
+<!-- Core Cruises Backoffice: published offers replace local fallback data when available. -->
+<script>
+(() => {
+  const API = 'https://api.corecruises.info/v1';
+  window.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const response = await fetch(API + '/offers', { headers: { Accept: 'application/json' }, cache: 'no-store' });
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      const liveOffers = await response.json();
+      if (!Array.isArray(liveOffers) || liveOffers.length === 0) return;
+      offersData.splice(0, offersData.length, ...liveOffers);
+      selectedDepartures.clear();
+      offerVisibilityKey = getOfferVisibilityKey();
+      renderRoutes();
+      console.info('Core Cruises Backoffice: ' + liveOffers.length + ' veröffentlichte Angebote geladen.');
+    } catch (error) {
+      console.info('Core Cruises Backoffice: lokaler Angebots-Fallback aktiv.', error);
+    }
+  });
+})();
+</script>
 </body>
 </html>
